@@ -1,0 +1,94 @@
+﻿@using CryptoMap.Data
+@using CryptoMap.Models
+@inject CoinGeckoFetcher CoinGeckoFetcher
+@inject UserAccountService UserAccountService
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <EditForm Model="@Account" OnValidSubmit="@HandleValidSubmit">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title</h5>
+                </div>
+                <div class="modal-body">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="form-group">
+                            <label for="accountName" class="form-label mt-4">Account name</label>
+                            <InputText @bind-Value="Account.Name" type="text" class="form-control" id="accountName" aria-describedby="The name of the account" placeholder="Enter Account Name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="coinType" class="form-label mt-4">Coin</label>
+                            <InputSelect class="form-select" @bind-Value="Account.Coin">
+                                @foreach(CoinGeckoMarket coin in CoinGeckoFetcher.GetCoins())
+                                {
+                                    <option value="@coin.symbol.ToUpper()"><img rel="icon" src="@coin.image" width="15" height="15"> @coin.name</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="form-group">
+                            <label for="coinAmount" class="form-label mt-4">Coin Amount</label>
+                            <InputNumber @bind-Value="Account.CoinAmount" type="text" class="form-control" id="coinAmount" aria-describedby="The amount of the coin you got" placeholder="0.01" />
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Validate</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [CascadingParameter]
+    private Pages.Index Parent { get; set; }
+    private string? Title { get; set; }
+    private UserAccount Account = new UserAccount();
+    private Guid Guid = Guid.NewGuid();
+    private string ModalDisplay = "none;";
+    private string ModalClass = "";
+    private bool ShowBackdrop = false;
+
+    public void OpenAdd()
+    {
+        this.Title = "Add a new Crypto Account !";
+        this.Account = new UserAccount() { Coin = "BTC", CoinAmount = 0 };
+        this.Open();
+    }
+
+    public void OpenModify(UserAccount accountToModify)
+    {
+        this.Title = "Modification of an existant Crypto Account !";
+        this.Account = accountToModify;
+        this.Open();
+    }
+
+    private void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    private void HandleValidSubmit()
+    {
+        UserAccountService.AddOrUpdateUserAccount(Account);
+        this.Parent.RefreshComponent();
+        this.Close();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+}

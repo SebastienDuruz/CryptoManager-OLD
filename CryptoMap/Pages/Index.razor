@@ -1,0 +1,110 @@
+﻿@page "/"
+@using CryptoMap.Data
+@using CryptoMap.Models
+@using CryptoMap.Pages.Components
+
+@inject CoinGeckoFetcher CoinGeckoFetcher
+@inject UserAccountService UserAccountService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Crypto Manager</PageTitle>
+
+
+<h2>Accounts Management</h2>
+
+<div class="d-flex">
+    <div class="flex-column w-50">
+        <div class="card m-2">
+            <div class="card-body btn btn-secondary">
+                <span class="oi oi-dollar" aria-hidden="true"></span> Total Value : @TotalValue.ToString("0.00") $
+            </div>
+        </div>
+    </div>  
+    <div class="flex-column w-50">
+        <div class="card m-2">
+          <div class="card-body btn btn-primary" @onclick="() => ModalComponent.OpenAdd()">
+              <span class="oi oi-plus" aria-hidden="true"></span> New Account 
+          </div>
+        </div>
+    </div>
+</div>  
+<div class="d-flex w-100">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Coin</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Value</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(UserAccount account in UserAccountService.UserAccounts)
+            {
+                CoinGeckoMarket? coin = CoinGeckoFetcher.Coins.Where(x => x.symbol.ToUpper() == account.Coin).FirstOrDefault();
+                <tr class="table-active">
+                    <th scope="row">@account.Name</th>
+                    <td>
+                        <img rel="icon" src="@coin.image" width="30" height="30">
+                        <span class="fw-bold p-1"> @coin.name</span>
+                    </td>
+                    <td>@account.CoinAmount</td>
+                    <td>@((coin.current_price * account.CoinAmount).ToString("0.00")) $</td>
+                    <td>
+                        <button class="btn" @onclick="() => ModalComponent.OpenModify(account)">
+                            <i class="oi oi-pencil"></i>
+                        </button>
+                        <button class="btn" @onclick="() => this.DeleteAccount(account)">
+                            <i class="oi oi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<CascadingValue Value="this">
+    <AddAccountModal @ref="ModalComponent"></AddAccountModal>
+</CascadingValue>
+
+@code{
+    private AddAccountModal ModalComponent { get; set; }
+    private double TotalValue { get; set; }
+    private string ActionTitle { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.ModalComponent = new AddAccountModal();
+        CoinGeckoFetcher.Coins = CoinGeckoFetcher.GetCoins();
+        this.UpdateTotalPrice();
+    }
+
+    private void UpdateTotalPrice()
+    {
+        TotalValue = 0;
+        foreach(UserAccount account in UserAccountService.UserAccounts)
+        {
+            TotalValue += CoinGeckoFetcher.Coins.Where(x => x.symbol.ToUpper() == account.Coin).FirstOrDefault().current_price * account.CoinAmount;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task DeleteAccount(UserAccount accountToDelete)
+    {
+        string title = $"Are you sure you want to delete the account [{accountToDelete.Name}] ?";
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", new object[] { title }))
+            return;
+
+        UserAccountService.DeleteUserAccount(accountToDelete.Uuid);
+        this.RefreshComponent();
+    }
+
+    public void RefreshComponent()
+    {
+        this.UpdateTotalPrice();
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,43 @@
+using CryptoMap.Data;
+using ElectronNET.API;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseElectron(args);
+
+// Add services to the container.
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddSingleton<CoinGeckoFetcher>();
+builder.Services.AddScoped<UserAccountService>();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+if (HybridSupport.IsElectronActive)
+{
+    CreateElectronWindow();
+}
+
+app.Run();
+
+async void CreateElectronWindow()
+{
+    var window = await Electron.WindowManager.CreateWindowAsync();
+    window.OnClosed += () => Electron.App.Quit();
+}

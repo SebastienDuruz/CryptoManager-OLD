@@ -1,0 +1,157 @@
+﻿@page "/coin/{coinSymbol}"
+
+@using ChartJs.Blazor.PieChart
+@using CryptoMap.Data
+@using CryptoMap.Models
+@using ChartJs.Blazor.LineChart
+
+@inject CoinGeckoFetcher CoinGeckoFetcher
+@inject IJSRuntime JSRuntime
+
+@if(CoinInfos != null)
+{
+    <div class="flex-column">
+        <div class="d-flex p-2 justify-content-between">
+            <div class="align-self-center">
+                <span class="fw-bold display-5">@CoinInfos.name (@CoinInfos.symbol.ToUpper())</span>
+            </div>
+            <div>               
+                <img rel="icon" src="@CoinInfos.image.large" width="80" height="80">
+            </div>
+            <div class="align-self-center">
+                @if(CoinInfos.links.homepage.Count > 0)
+                {
+                    <div>
+                        <span class="badge bg-primary" role="button" @onclick="() => NavigateToWeb(CoinInfos.links.homepage[0])">Website</span>
+                    </div>
+                }
+                @if(CoinInfos.links.repos_url.github.Count > 0)
+                {
+                    <div>
+                        <span class="badge bg-primary accordion-body" role="button" @onclick="() => NavigateToWeb(CoinInfos.links.repos_url.github[0])">Github</span>
+                    </div>
+                }
+            </div>
+        </div>
+        <span class="fw-bold pe-auto display-6">30 days Graphics</span>
+        <div class="d-flex">
+            <div class="w-50">
+                <span class="fw-bold pe-auto">Price ($)</span>
+                <Chart Config="PriceChart"></Chart>
+            </div>
+            <div class="w-50">
+                <span class="fw-bold pe-auto">Volume ($)</span>
+                <Chart Config="VolumeChart"></Chart>
+            </div>
+        </div>
+        
+        <div class="p-2">
+            <span class="fw-bold pe-auto display-6">Description</span>
+            @if(CoinInfos.description.en != "")
+            {
+                <p>@((MarkupString)CoinInfos.description.en)</p>
+            }
+            else
+            {
+                <p>No description provided.</p>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p>The Coin [@CoinSymbol] has not been found, please try later</p>
+    <p>Return to the full Map by clicking <a href="/map">here</a></p>
+}
+
+@code {
+    [Parameter]
+    public string? CoinSymbol { get; set; }
+    private CoinGeckoFullData CoinInfos { get; set; }
+    private LineConfig PriceChart { get; set; }
+    private LineConfig VolumeChart { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.CoinInfos = CoinGeckoFetcher.GetCoinData(this.CoinSymbol);
+        SetupLinearChart();
+    }
+
+    public async Task NavigateToWeb(string url)
+    {
+        await JSRuntime.InvokeAsync<object>("open", url, "_blank");
+    }
+
+    private void SetupLinearChart()
+    {
+        if(this.CoinInfos.market_datas != null)
+        {
+            // Build a new LineChart for prices
+            this.PriceChart = new LineConfig()
+            {
+                Options = new LineOptions()
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = false,
+                        Text = "Last 30 days data"
+                    }
+                }
+            };
+
+            // Build a new LineChart for volumes
+            this.VolumeChart = new LineConfig()
+            {
+                Options = new LineOptions()
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = false,
+                        Text = "Last 30 days data"
+                    }
+                }
+            };
+
+            // Generate the date stamps
+            for(int i = this.CoinInfos.market_datas.prices.Count() - 1; i > 0; --i)
+            {
+                this.PriceChart.Data.Labels.Add((DateTime.Now.Date - TimeSpan.FromDays(i)).Date.ToString().Replace("00:00:00", ""));
+                this.VolumeChart.Data.Labels.Add((DateTime.Now.Date - TimeSpan.FromDays(i)).Date.ToString().Replace("00:00:00", ""));
+            }
+
+            // Generate the price data from CoinGecko API
+            double[] prices = new double[31];
+            int counter = 0;
+            foreach(List<double> price in this.CoinInfos.market_datas.prices)
+            {
+                prices[counter] = Double.Parse(price[1].ToString("0.00"));
+                ++counter;
+            }
+            LineDataset<double> pricesDataset = new LineDataset<double>(prices)
+            {
+                Label = "Price $",
+                BorderColor = ColorUtil.ColorHexString(54, 162, 235)
+            };
+
+            // Generate the volume data from CoinGecko API
+            double[] volumes = new double[31];
+            counter = 0;
+            foreach(List<double> volume in this.CoinInfos.market_datas.total_volumes)
+            {
+                volumes[counter] = Double.Parse(volume[1].ToString("0.00"));
+                ++counter;
+            }
+            LineDataset<double> volumesDataset = new LineDataset<double>(volumes)
+            {
+                Label = "Volumes $",
+                BorderColor = ColorUtil.ColorHexString(231, 76, 60)
+            };
+
+
+            this.PriceChart.Data.Datasets.Add(pricesDataset);
+            this.VolumeChart.Data.Datasets.Add(volumesDataset);
+        }
+    }
+}
