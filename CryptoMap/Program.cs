@@ -1,5 +1,6 @@
 using CryptoMap.Data;
 using ElectronNET.API;
+using ElectronNET.API.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,14 @@ app.Run();
 
 async void CreateElectronWindow()
 {
-    var window = await Electron.WindowManager.CreateWindowAsync();
+    var window = await Electron.WindowManager.CreateWindowAsync(
+        new BrowserWindowOptions() {
+            Width = 1300,
+            Height = 1000,
+            Resizable = false,
+            Maximizable = false,
+            Title = "Crypto Manager"
+        }); 
+
     window.OnClosed += () => Electron.App.Quit();
 }

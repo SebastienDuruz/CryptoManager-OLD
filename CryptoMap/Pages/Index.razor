@@ -6,6 +6,7 @@
 @inject CoinGeckoFetcher CoinGeckoFetcher
 @inject UserAccountService UserAccountService
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
 
 <PageTitle>Crypto Manager</PageTitle>
 
@@ -40,14 +41,14 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(UserAccount account in UserAccountService.UserAccounts)
+            @foreach(UserAccount account in UserAccountService.UserAccounts.OrderBy(x => x.Coin))
             {
                 CoinGeckoMarket? coin = CoinGeckoFetcher.Coins.Where(x => x.symbol.ToUpper() == account.Coin).FirstOrDefault();
                 <tr class="table-active">
                     <th scope="row">@account.Name</th>
-                    <td>
+                    <td @onclick="() => LoadCoinPage(coin.id)" role="button">
                         <img rel="icon" src="@coin.image" width="30" height="30">
-                        <span class="fw-bold p-1"> @coin.name</span>
+                        <span class="fw-bold p-1"> @coin.name (@coin.symbol.ToUpper())</span>
                     </td>
                     <td>@account.CoinAmount</td>
                     <td>@((coin.current_price * account.CoinAmount).ToString("0.00")) $</td>
@@ -70,9 +71,9 @@
 </CascadingValue>
 
 @code{
-    private AddAccountModal ModalComponent { get; set; }
+    private AddAccountModal? ModalComponent { get; set; }
     private double TotalValue { get; set; }
-    private string ActionTitle { get; set; }
+    private string? ActionTitle { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -90,6 +91,11 @@
         }
 
         StateHasChanged();
+    }
+
+    private void LoadCoinPage(string coinId)
+    {
+        NavManager.NavigateTo($"/coin/{coinId}");
     }
 
     private async Task DeleteAccount(UserAccount accountToDelete)
