@@ -4,26 +4,12 @@ using System.Net.Http.Headers;
 
 namespace CryptoMap.Data
 {
-    /// <summary>
-    /// Fetch the data from CoinGecko API
-    /// </summary>
     public class CoinGeckoFetcher
     {
-        /// <summary>
-        /// HttpClient executing the requests
-        /// </summary>
         private HttpClient Client { get; set; }
-
-        /// <summary>
-        /// The base URL of the CoinGecko API
-        /// </summary>
         private string BaseURL { get; set; }
-
         public List<CoinGeckoMarket> Coins { get; set; }
-
-        /// <summary>
-        /// Default Constructor
-        /// </summary>
+        
         public CoinGeckoFetcher()
         {
             this.Client = new HttpClient();
@@ -31,10 +17,6 @@ namespace CryptoMap.Data
             this.Coins = GetCoins();
         }
 
-        /// <summary>
-        /// Get the top 250 coins from CoinGecko API
-        /// </summary>
-        /// <returns>Coins list</returns>
         public List<CoinGeckoMarket> GetCoins()
         {
             // Prepare the request
@@ -57,11 +39,6 @@ namespace CryptoMap.Data
             return null;
         }
 
-        /// <summary>
-        /// Get the full informations about a specific coin
-        /// </summary>
-        /// <param name="coinId">The coin id to fetch ("bitcoin" for example)</param>
-        /// <returns>Coin infos</returns>
         public CoinGeckoFullData GetCoinData(string coinId)
         {
             // Prepare the request
