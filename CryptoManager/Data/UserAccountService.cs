@@ -1,7 +1,7 @@
-﻿using CryptoMap.Models;
+﻿using CryptoManager.Models;
 using Newtonsoft.Json;
 
-namespace CryptoMap.Data
+namespace CryptoManager.Data
 {
     public class UserAccountService
     {

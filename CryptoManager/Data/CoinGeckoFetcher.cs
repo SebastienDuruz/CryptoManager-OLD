@@ -1,8 +1,8 @@
-﻿using CryptoMap.Models;
+﻿using CryptoManager.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
-namespace CryptoMap.Data
+namespace CryptoManager.Data
 {
     public class CoinGeckoFetcher
     {

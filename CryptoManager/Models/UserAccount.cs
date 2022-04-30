@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CryptoMap.Models
+namespace CryptoManager.Models
 {
     public class UserAccount
     {

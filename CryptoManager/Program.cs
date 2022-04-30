@@ -1,4 +1,4 @@
-using CryptoMap.Data;
+using CryptoManager.Data;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
 

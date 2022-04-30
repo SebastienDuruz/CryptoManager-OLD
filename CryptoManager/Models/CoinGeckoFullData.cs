@@ -1,4 +1,4 @@
-﻿namespace CryptoMap.Models
+﻿namespace CryptoManager.Models
 {
     public class CoinGeckoFullData
     {
