@@ -27,6 +27,10 @@
                             </InputSelect>
                         </div>
                         <div class="form-group">
+                            <label for="category" class="form-label mt-4">Category</label>
+                            <InputText @bind-Value="Account.AccountCategory" type="text" class="form-control" id="category" aria-describedby="The category of the account" placeholder="Enter Category Name" />
+                        </div>
+                        <div class="form-group">
                             <label for="coinAmount" class="form-label mt-4">Coin Amount</label>
                             <InputNumber @bind-Value="Account.CoinAmount" type="text" class="form-control" id="coinAmount" aria-describedby="The amount of the coin you got" placeholder="0.01" />
                         </div>
@@ -58,7 +62,7 @@
     public void OpenAdd()
     {
         this.Title = "Add a new Crypto Account !";
-        this.Account = new UserAccount() { Coin = "BTC", CoinAmount = 0 };
+        this.Account = new UserAccount() { Coin = "BTC", CoinAmount = 0, AccountCategory = "DEFAULT_CATEGORY" };
         this.Open();
     }
 

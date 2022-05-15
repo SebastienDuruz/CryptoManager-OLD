@@ -11,5 +11,7 @@ namespace CryptoManager.Models
         public string Coin { get; set; }
         [Required]
         public double CoinAmount { get; set; }
+        [Required]
+        public string AccountCategory { get; set; }
     }
 }
