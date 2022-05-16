@@ -19,13 +19,13 @@
                 <img rel="icon" src="@CoinInfos.image.large" width="80" height="80">
             </div>
             <div class="align-self-center">
-                @if(CoinInfos.links.homepage.Count > 0)
+                @if(CoinInfos.links.homepage.Count > 0 && !String.IsNullOrWhiteSpace(CoinInfos.links.homepage[0]))
                 {
                     <div>
                         <span class="badge bg-primary" role="button" @onclick="() => NavigateToWeb(CoinInfos.links.homepage[0])">Website</span>
                     </div>
                 }
-                @if(CoinInfos.links.repos_url.github.Count > 0)
+                @if(CoinInfos.links.repos_url.github.Count > 0 && !String.IsNullOrWhiteSpace(CoinInfos.links.repos_url.github[0]))
                 {
                     <div>
                         <span class="badge bg-primary accordion-body" role="button" @onclick="() => NavigateToWeb(CoinInfos.links.repos_url.github[0])">Github</span>
