@@ -17,10 +17,10 @@
 else
 {
     <div class="d-flex w-100">
-        <input class="w-100 m-2" @bind="Filter" @bind:event="oninput" placeholder="Search..."></input>
+        <input class="w-100 m-2 form-control" @bind="Filter" @bind:event="oninput" placeholder="Search..."></input>
     </div>
     <div class="d-flex w-100">
-        <table class="table table-hover m-2">
+        <table class="table table-sm table-hover m-2">
             <thead>
                 <tr>
                     <th>Coin</th>
@@ -37,17 +37,17 @@ else
                     if(coin.name.ToLower().Contains(Filter.ToLower()) || coin.symbol.ToLower().Contains(Filter.ToLower()) || coin.id.ToLower().Contains(Filter.ToLower()))
                     {
                         <tr class="table-active" role="button" @onclick="@(async () => await LoadCoinPage(coin.id))">
-                            <th scope="row">
+                            <th class="align-middle" scope="row">
                                 <img rel="icon" src="@coin.image" width="30" height="30">
                                 <span class="fw-bold p-1 pe-auto"> @coin.name</span>
                             </th>
-                            <td>
+                            <td class="align-middle">
                                 <span>@coin.symbol.ToUpper()</span>
                             </td>
-                            <td>@(coin.current_price.ToString("0.00")) $</td>
-                            <td class="@(coin.price_change_percentage_24h < 0 ? "text-danger" : "text-success")">@(String.Format("{0:0.##}", coin.price_change_percentage_24h)) %</td>
-                            <td>@(coin.total_volume.ToString("0.00")) $</td>
-                            <td>@(coin.market_cap.ToString("0.00")) $</td>
+                            <td class="align-middle">@(coin.current_price.ToString("0.00")) $</td>
+                            <td class="align-middle @(coin.price_change_percentage_24h < 0 ? "text-danger" : "text-success")">@(String.Format("{0:0.##}", coin.price_change_percentage_24h)) %</td>
+                            <td class="align-middle">@(coin.total_volume.ToString("0.00")) $</td>
+                            <td class="align-middle">@(coin.market_cap.ToString("0.00")) $</td>
                         </tr>
                     }
                 }
