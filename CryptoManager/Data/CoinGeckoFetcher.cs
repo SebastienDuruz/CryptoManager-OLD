@@ -25,8 +25,8 @@ namespace CryptoManager.Data
             this.Client.BaseAddress = new Uri(this.BaseURL);
             this.Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            // By default load 500 cryptocurrencies
-            for (int i = 1; i < 3; ++i)
+            // By default load 1000 cryptocurrencies
+            for (int i = 1; i < 5; ++i)
             {
                 // Execute the request
                 HttpResponseMessage response = this.Client.GetAsync($"coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page={i}").Result;
