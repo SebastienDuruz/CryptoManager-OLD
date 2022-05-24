@@ -10,7 +10,7 @@ builder.WebHost.UseElectron(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<CoinGeckoFetcher>();
-builder.Services.AddScoped<UserAccountService>();
+builder.Services.AddSingleton<UserAccountService>();
 
 var app = builder.Build();
 
