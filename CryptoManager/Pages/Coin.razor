@@ -11,9 +11,12 @@
 @if(CoinInfos != null)
 {
     <div class="flex-column">
-        <div class="d-flex p-2 justify-content-between">
+        <div class="d-flex pe-2 pt-2 justify-content-between">
             <div class="align-self-center">
                 <span class="fw-bold display-5">@CoinInfos.name (@CoinInfos.symbol.ToUpper())</span>
+            </div>
+            <div class="align-self-center">
+                <span class="display-5">@CurrentPrice $</span>
             </div>
             <div>               
                 <img rel="icon" src="@CoinInfos.image.large" width="80" height="80">
@@ -70,10 +73,12 @@ else
     private CoinGeckoFullData CoinInfos { get; set; }
     private LineConfig PriceChart { get; set; }
     private LineConfig VolumeChart { get; set; }
+    private string CurrentPrice { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         this.CoinInfos = CoinGeckoFetcher.GetCoinData(this.CoinSymbol);
+        this.CurrentPrice = CoinGeckoFetcher.GetSimplePrice(this.CoinSymbol);
         SetupLinearChart();
     }
 

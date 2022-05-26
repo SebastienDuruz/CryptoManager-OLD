@@ -80,5 +80,25 @@ namespace CryptoManager.Data
 
             return null;
         }
+
+        public string GetSimplePrice(string coinId)
+        {
+            // Prepare the request
+            this.Client = new HttpClient();
+            this.Client.BaseAddress = new Uri(this.BaseURL);
+            this.Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Execute the request
+            HttpResponseMessage response = this.Client.GetAsync($"simple/price?ids={coinId}&vs_currencies=usd&include_market_cap=false&include_24hr_vol=false&include_24hr_change=false&include_last_updated_at=false").Result;
+
+            // All fine, deserialize the result
+            if(response.IsSuccessStatusCode)
+            {
+                string jsonString = response.Content.ReadAsStringAsync().Result;
+                return jsonString.Split(":")[2].Replace("}", "");
+            }
+
+            return "";
+        }
     }
 }
