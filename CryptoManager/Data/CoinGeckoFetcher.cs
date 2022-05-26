@@ -8,13 +8,16 @@ namespace CryptoManager.Data
     {
         private HttpClient Client { get; set; }
         private string BaseURL { get; set; }
+        private int PageCounter { get; set; }
+        private int PageSize { get; set; } = 250;
         public List<CoinGeckoMarket> Coins { get; set; }
         
-        public CoinGeckoFetcher()
+        public CoinGeckoFetcher(UserSettingsService userSettings)
         {
             this.Client = new HttpClient();
             this.BaseURL = "https://api.coingecko.com/api/v3/";
             this.Coins = GetCoins();
+            this.PageCounter = userSettings.UserSettings.CoinAmount / 250; // 250 coins on each page
         }
 
         public List<CoinGeckoMarket> GetCoins()
@@ -25,11 +28,11 @@ namespace CryptoManager.Data
             this.Client.BaseAddress = new Uri(this.BaseURL);
             this.Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            // By default load 1000 cryptocurrencies
-            for (int i = 1; i < 5; ++i)
+            // Load the required pages (settings set by user)
+            for (int i = 1; i < 1 + PageCounter; ++i)
             {
                 // Execute the request
-                HttpResponseMessage response = this.Client.GetAsync($"coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page={i}").Result;
+                HttpResponseMessage response = this.Client.GetAsync($"coins/markets?vs_currency=usd&order=market_cap_desc&per_page={PageSize}&page={i}").Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -56,7 +59,7 @@ namespace CryptoManager.Data
             // Execute the request
             HttpResponseMessage response = this.Client.GetAsync($"coins/{coinId}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false").Result;
 
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode) 
             {
                 string jsonString = response.Content.ReadAsStringAsync().Result;
                 CoinGeckoFullData coinInfos = JsonConvert.DeserializeObject<CoinGeckoFullData>(jsonString);

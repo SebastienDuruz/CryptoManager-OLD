@@ -11,6 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<CoinGeckoFetcher>();
 builder.Services.AddSingleton<UserAccountService>();
+builder.Services.AddSingleton<UserSettingsService>();
 
 var app = builder.Build();
 

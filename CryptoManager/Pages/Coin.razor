@@ -8,6 +8,8 @@
 @inject CoinGeckoFetcher CoinGeckoFetcher
 @inject IJSRuntime JSRuntime
 
+<PageTitle>Coin Details Page</PageTitle>
+
 @if(CoinInfos != null)
 {
     <div class="flex-column">
@@ -47,7 +49,6 @@
                 <Chart Config="VolumeChart"></Chart>
             </div>
         </div>
-        
         <div class="p-2">
             <span class="fw-bold pe-auto display-6">Description</span>
             @if(CoinInfos.description.en != "")

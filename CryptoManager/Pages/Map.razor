@@ -82,7 +82,7 @@ else
     <div class="d-flex w-100 align-items-center justify-content-center">
         <div class="btn-toolbar" role="toolbar">
           <div class="btn-group m-2" role="group">
-                @for(int i = 1; i < TotalPages; ++i)
+                @for(int i = 1; i < TotalPages +1; ++i)
                 {
                     int page = i;
                     <button type="button" class="btn @(i == CurrentPage ? "btn-primary" : "btn-secondary")" @onclick="(x) => ChangeCurrentPage(page)">@i</button>
