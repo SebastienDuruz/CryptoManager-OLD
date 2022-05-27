@@ -8,7 +8,7 @@
 
 <PageTitle>Crypto Map</PageTitle>
 
-<h2>Crypto Currencies by Market Cap</h2>
+<h2 class="m-2">Crypto Currencies by Market Cap</h2>
 
 @if(CoinGeckoFetcher.Coins == null)
 {
@@ -79,15 +79,25 @@ else
     </div>
     @if(String.IsNullOrWhiteSpace(FilterText))
     {
-    <div class="d-flex w-100 align-items-center justify-content-center">
-        <div class="btn-toolbar" role="toolbar">
-          <div class="btn-group m-2" role="group">
-                @for(int i = 1; i < TotalPages +1; ++i)
+    <div class="d-flex w-100 align-items-between justify-content-between">
+        <div class="btn-toolbar flex-fill justify-content-between" role="toolbar">
+            <div class="btn-group m-2" role="group">
+                <button type="button" class="btn @(1 == CurrentPage ? "btn-primary" : "btn-secondary")" @onclick="(x) => ChangeCurrentPage(1)">First</button>
+            </div>
+            <div class="btn-group m-2" role="group">
+                @for(int i = CurrentPage -4; i < CurrentPage +5; ++i)
                 {
                     int page = i;
-                    <button type="button" class="btn @(i == CurrentPage ? "btn-primary" : "btn-secondary")" @onclick="(x) => ChangeCurrentPage(page)">@i</button>
+
+                    if(page >= 1 && page <= TotalPages)
+                    {
+                        <button type="button" class="btn @(i == CurrentPage ? "btn-primary" : "btn-secondary")" @onclick="(x) => ChangeCurrentPage(page)">@i</button>
+                    }
                 }
-          </div>
+            </div>
+            <div class="btn-group m-2" role="group">
+                <button type="button" class="btn @(TotalPages == CurrentPage ? "btn-primary" : "btn-secondary")" @onclick="(x) => ChangeCurrentPage(TotalPages)">Last</button>
+            </div>
         </div>
     </div>
     }

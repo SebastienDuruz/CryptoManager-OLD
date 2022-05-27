@@ -9,7 +9,7 @@
 
 <PageTitle>App settings page</PageTitle>
 
-<h2>App settings</h2>
+<h2 class="m-2">App settings</h2>
 
 <EditForm Model="NewSettings">
     <div class="d-flex w-100 align-items-center justify-content-center">
@@ -22,6 +22,19 @@
         </div>
     </div>
     <div class="d-flex w-100 align-items-center justify-content-center">
+        <div class="p-2">
+            Color theme of the application (provided by Bootswatch)
+        </div>
+        <div class="p-2">
+            <InputSelect class="form-control" TValue="string" @bind-Value="NewSettings.Theme">
+                @foreach(string theme in Themes)
+                {
+                    <option value="@theme">@theme</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+    <div class="d-flex w-100 align-items-center justify-content-center">
         <button class="btn btn-outline-primary" @onclick="() => SaveUserSettings()">Save</button>
     </div>
 </EditForm>
@@ -29,15 +42,30 @@
 @code{
     private UserSettings NewSettings { get; set; }
 
+    private List<string> Themes { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         this.NewSettings = UserSettingsService.ReadUserSettings();
+        this.Themes = new List<string>();
+        this.GetThemesFromCSSFiles();
     }
 
     private async Task SaveUserSettings()
     {
         UserSettingsService.WriteUserSettings(NewSettings);
 
-        await JSRuntime.InvokeVoidAsync("alert", "Settings has been saved, restart the application to see the changes !");
+        await JSRuntime.InvokeVoidAsync("alert", "Settings has been saved, restart the application to apply the changes !");
+    }
+
+    private void GetThemesFromCSSFiles()
+    {
+        // Get each CSS file on the themes folder
+        string[] cssFiles = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "css", "bootstrap"), "*.css");
+
+        foreach(string path in cssFiles)
+        {
+            this.Themes.Add(Path.GetFileName(path).Replace(".min.css", ""));
+        }
     }
 }

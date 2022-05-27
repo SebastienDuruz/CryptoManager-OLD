@@ -38,19 +38,21 @@
                 }
             </div>
         </div>
-        <span class="fw-bold pe-auto display-6">30 days Graphics</span>
-        <div class="d-flex">
-            <div class="w-50">
-                <span class="fw-bold pe-auto">Price ($)</span>
-                <Chart Config="PriceChart"></Chart>
-            </div>
-            <div class="w-50">
-                <span class="fw-bold pe-auto">Volume ($)</span>
-                <Chart Config="VolumeChart"></Chart>
+        <div class="p-2 mt-2">
+            <span class="fw-bold pe-auto display-6 mt-2">30 days Graphics</span>
+            <div class="d-flex">
+                <div class="w-50">
+                    <span class="fw-bold pe-auto">Price ($)</span>
+                    <Chart Config="PriceChart"></Chart>
+                </div>
+                <div class="w-50">
+                    <span class="fw-bold pe-auto">Volume ($)</span>
+                    <Chart Config="VolumeChart"></Chart>
+                </div>
             </div>
         </div>
-        <div class="p-2">
-            <span class="fw-bold pe-auto display-6">Description</span>
+        <div class="p-2 mt-2">
+            <span class="fw-bold pe-auto display-6 mt-2">Description</span>
             @if(CoinInfos.description.en != "")
             {
                 <p>@((MarkupString)CoinInfos.description.en)</p>

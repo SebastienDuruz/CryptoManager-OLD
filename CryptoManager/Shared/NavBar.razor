@@ -1,0 +1,39 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="d-flex h-100 align-self-center justify-content-center">
+    <ul class="nav nav-pills flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
+        <li class="nav-item">
+            <a href="" class="nav-link m-2 py-2 px-2 @(@NavigationManager.Uri.Replace(NavigationManager.BaseUri, "") == "" ? "active" : "")" title="">
+                <i class="oi oi-home fs-4"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="map" class="nav-link m-2 py-2 px-2 @(@NavigationManager.Uri.Replace(NavigationManager.BaseUri, "") == "map" ? "active" : "")" title="">
+                <i class="oi oi-graph fs-4"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="settings" class="nav-link m-2 py-2 px-2 @(@NavigationManager.Uri.Replace(NavigationManager.BaseUri, "") == "settings" ? "active" : "")" title="">
+                <i class="oi oi-wrench fs-4"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="about" class="nav-link m-2 py-2 px-2 @(@NavigationManager.Uri.Replace(NavigationManager.BaseUri, "") == "about" ? "active" : "")" title="">
+                <i class="oi oi-code fs-4"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += OnLocationChanges;
+    }
+
+    private void OnLocationChanges(object sender, LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+}

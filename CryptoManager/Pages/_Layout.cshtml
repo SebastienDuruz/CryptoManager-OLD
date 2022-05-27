@@ -1,6 +1,9 @@
-﻿@using Microsoft.AspNetCore.Components.Web
+﻿@using CryptoManager.Data
+@using Microsoft.AspNetCore.Components.Web
 @namespace CryptoManager.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@inject UserSettingsService UserSettingsService
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +11,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="~/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap/@(@UserSettingsService.UserSettings.Theme).min.css" />
     <link href="css/site.css" rel="stylesheet" />
     <link href="CryptoManager.styles.css" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
