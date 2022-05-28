@@ -32,5 +32,11 @@ namespace CryptoManager.Data
             File.WriteAllText(this.FilePath, JsonConvert.SerializeObject(newSettings));
             this.UserSettings = newSettings;
         }
+
+        public void ReloadSettings()
+        {
+            if (File.Exists(this.FilePath))
+                this.UserSettings = JsonConvert.DeserializeObject<UserSettings>(File.ReadAllText(this.FilePath));
+        }
     }
 }

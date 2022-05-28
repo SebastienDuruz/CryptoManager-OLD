@@ -8,6 +8,11 @@
             </a>
         </li>
         <li class="nav-item">
+            <a href="stats" class="nav-link m-2 py-2 px-2 @(@NavigationManager.Uri.Replace(NavigationManager.BaseUri, "") == "stats" ? "active" : "")" title="">
+                <i class="oi oi-pie-chart fs-4"></i>
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="map" class="nav-link m-2 py-2 px-2 @(@NavigationManager.Uri.Replace(NavigationManager.BaseUri, "") == "map" ? "active" : "")" title="">
                 <i class="oi oi-graph fs-4"></i>
             </a>

@@ -9,18 +9,18 @@ namespace CryptoManager.Data
         private HttpClient Client { get; set; }
         private string BaseURL { get; set; }
         private int PageCounter { get; set; }
-        private int PageSize { get; set; } = 100;
+        private int CoinGeckoPageSize { get; set; } = 100;
         public List<CoinGeckoMarket> Coins { get; set; }
         
         public CoinGeckoFetcher(UserSettingsService userSettings)
         {
             this.Client = new HttpClient();
             this.BaseURL = "https://api.coingecko.com/api/v3/";
-            this.PageCounter = userSettings.UserSettings.CoinAmount / PageSize; // 250 coins on each page
+            this.PageCounter = userSettings.UserSettings.CoinAmount / CoinGeckoPageSize;
             this.Coins = GetCoins();
         }
 
-        public List<CoinGeckoMarket> GetCoins()
+        private List<CoinGeckoMarket> GetCoins()
         {
             List<CoinGeckoMarket> finalCoinsList = new List<CoinGeckoMarket>();
 
@@ -32,7 +32,7 @@ namespace CryptoManager.Data
             for (int i = 1; i < 1 + PageCounter; ++i)
             {
                 // Execute the request
-                HttpResponseMessage response = this.Client.GetAsync($"coins/markets?vs_currency=usd&order=market_cap_desc&per_page={PageSize}&page={i}").Result;
+                HttpResponseMessage response = this.Client.GetAsync($"coins/markets?vs_currency=usd&order=market_cap_desc&per_page={CoinGeckoPageSize}&page={i}").Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -102,6 +102,12 @@ namespace CryptoManager.Data
             }
 
             return "";
+        }
+
+        public void RefreshCoinList(int totalCoins)
+        {
+            this.PageCounter = totalCoins / CoinGeckoPageSize;
+            this.Coins = GetCoins();
         }
     }
 }

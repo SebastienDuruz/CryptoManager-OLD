@@ -118,7 +118,6 @@ else
         this.IsFiltering = false;
         this.PageSize = UserSettingsService.UserSettings.CoinPerPage;
         this.CurrentPage = 1;
-        CoinGeckoFetcher.Coins = CoinGeckoFetcher.GetCoins();
         this.TotalPages = CoinGeckoFetcher.Coins.Count / this.PageSize;
     }
 
