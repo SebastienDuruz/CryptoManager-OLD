@@ -9,15 +9,15 @@ namespace CryptoManager.Data
         private HttpClient Client { get; set; }
         private string BaseURL { get; set; }
         private int PageCounter { get; set; }
-        private int PageSize { get; set; } = 250;
+        private int PageSize { get; set; } = 100;
         public List<CoinGeckoMarket> Coins { get; set; }
         
         public CoinGeckoFetcher(UserSettingsService userSettings)
         {
             this.Client = new HttpClient();
             this.BaseURL = "https://api.coingecko.com/api/v3/";
+            this.PageCounter = userSettings.UserSettings.CoinAmount / PageSize; // 250 coins on each page
             this.Coins = GetCoins();
-            this.PageCounter = userSettings.UserSettings.CoinAmount / 250; // 250 coins on each page
         }
 
         public List<CoinGeckoMarket> GetCoins()

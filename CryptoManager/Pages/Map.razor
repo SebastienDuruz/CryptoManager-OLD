@@ -3,6 +3,7 @@
 @using CryptoManager.Models
 
 @inject CoinGeckoFetcher CoinGeckoFetcher
+@inject UserSettingsService UserSettingsService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 
@@ -115,7 +116,7 @@ else
     {
         this.FilterText = "";
         this.IsFiltering = false;
-        this.PageSize = 50;
+        this.PageSize = UserSettingsService.UserSettings.CoinPerPage;
         this.CurrentPage = 1;
         CoinGeckoFetcher.Coins = CoinGeckoFetcher.GetCoins();
         this.TotalPages = CoinGeckoFetcher.Coins.Count / this.PageSize;
