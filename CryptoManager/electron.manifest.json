@@ -13,6 +13,13 @@
     "copyright": "Copyright © 2022",
     "buildVersion": "1.0.0",
     "compression": "maximum",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "SebastienDuruz",
+        "repo": "CryptoManager"
+      }
+    ],
     "directories": {
       "output": "../../../bin/Desktop"
     },

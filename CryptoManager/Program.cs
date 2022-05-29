@@ -51,3 +51,5 @@ async void CreateElectronWindow()
 
     window.OnClosed += () => Electron.App.Quit();
 }
+
+
