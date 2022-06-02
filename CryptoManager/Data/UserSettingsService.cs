@@ -17,7 +17,16 @@ namespace CryptoManager.Data
         public UserSettings ReadUserSettings()
         {
             if(File.Exists(this.FilePath))
-                return JsonConvert.DeserializeObject<UserSettings>(File.ReadAllText(this.FilePath));
+            {
+                try
+                {
+                    return JsonConvert.DeserializeObject<UserSettings>(File.ReadAllText(this.FilePath));
+                }
+                catch(Exception ex)
+                {
+                    // TODO : ask the user for action to take with corrupted file
+                }
+            }
 
             return new UserSettings();
         }
@@ -36,7 +45,7 @@ namespace CryptoManager.Data
         public void ReloadSettings()
         {
             if (File.Exists(this.FilePath))
-                this.UserSettings = JsonConvert.DeserializeObject<UserSettings>(File.ReadAllText(this.FilePath));
+                this.UserSettings = ReadUserSettings();
         }
     }
 }

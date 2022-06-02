@@ -11,13 +11,19 @@ namespace CryptoManager.Data
         private int PageCounter { get; set; }
         private int CoinGeckoPageSize { get; set; } = 100;
         public List<CoinGeckoMarket> Coins { get; set; }
+        public bool OfflineMode { get; set; }
         
         public CoinGeckoFetcher(UserSettingsService userSettings)
         {
             this.Client = new HttpClient();
             this.BaseURL = "https://api.coingecko.com/api/v3/";
             this.PageCounter = userSettings.UserSettings.CoinAmount / CoinGeckoPageSize;
+            this.OfflineMode = false;
             this.Coins = GetCoins();
+
+            // Set offlineMode if CoinGecko is not reachable
+            if(this.Coins.Count == 0)
+                this.OfflineMode = true;
         }
 
         private List<CoinGeckoMarket> GetCoins()
@@ -31,22 +37,29 @@ namespace CryptoManager.Data
             // Load the required pages (settings set by user)
             for (int i = 1; i < 1 + PageCounter; ++i)
             {
+                HttpResponseMessage response;
+
                 // Execute the request
-                HttpResponseMessage response = this.Client.GetAsync($"coins/markets?vs_currency=usd&order=market_cap_desc&per_page={CoinGeckoPageSize}&page={i}").Result;
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    // Parse the response to ActivityModel
-                    string jsonString = response.Content.ReadAsStringAsync().Result;
+                    response = this.Client.GetAsync($"coins/markets?vs_currency=usd&order=market_cap_desc&per_page={CoinGeckoPageSize}&page={i}").Result;
 
-                    List<CoinGeckoMarket> coins = JsonConvert.DeserializeObject<List<CoinGeckoMarket?>>(jsonString);
-                    finalCoinsList.AddRange(coins);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Parse the response to ActivityModel
+                        string jsonString = response.Content.ReadAsStringAsync().Result;
+
+                        List<CoinGeckoMarket> coins = JsonConvert.DeserializeObject<List<CoinGeckoMarket?>>(jsonString);
+                        finalCoinsList.AddRange(coins);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    // TODO : Logging the errors, maybe set Offline Mode ?
                 }
             }
 
-            if(finalCoinsList.Count > 0)
-                return finalCoinsList;
-            return null;
+            return finalCoinsList;
         }
 
         public CoinGeckoFullData GetCoinData(string coinId)
@@ -91,14 +104,21 @@ namespace CryptoManager.Data
             this.Client.BaseAddress = new Uri(this.BaseURL);
             this.Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            // Execute the request
-            HttpResponseMessage response = this.Client.GetAsync($"simple/price?ids={coinId}&vs_currencies=usd&include_market_cap=false&include_24hr_vol=false&include_24hr_change=false&include_last_updated_at=false").Result;
-
-            // All fine, deserialize the result
-            if(response.IsSuccessStatusCode)
+            try
             {
-                string jsonString = response.Content.ReadAsStringAsync().Result;
-                return jsonString.Split(":")[2].Replace("}", "");
+                // Execute the request
+                HttpResponseMessage response = this.Client.GetAsync($"simple/price?ids={coinId}&vs_currencies=usd&include_market_cap=false&include_24hr_vol=false&include_24hr_change=false&include_last_updated_at=false").Result;
+
+                // All fine, deserialize the result
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonString = response.Content.ReadAsStringAsync().Result;
+                    return jsonString.Split(":")[2].Replace("}", "");
+                }
+            }
+            catch (Exception ex)
+            {
+                
             }
 
             return "";

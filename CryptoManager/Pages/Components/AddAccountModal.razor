@@ -20,10 +20,17 @@
                         <div class="form-group">
                             <label for="coinType" class="form-label mt-4">Coin</label>
                             <InputSelect class="form-select" @bind-Value="Account.Coin">
+                            @if(CoinGeckoFetcher.Coins.Count > 0)
+                            {
                                 @foreach(CoinGeckoMarket coin in CoinGeckoFetcher.Coins)
                                 {
                                     <option value="@coin.symbol.ToUpper()"><img rel="icon" src="@coin.image" width="15" height="15"> @coin.name</option>
                                 }
+                            }
+                            else
+                            {
+                                <option value="NO DATA">NO DATA</option>
+                            }
                             </InputSelect>
                         </div>
                         <div class="form-group">
@@ -36,7 +43,10 @@
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Validate</button>
+                    @if(!CoinGeckoFetcher.OfflineMode)
+                    {
+                        <button type="submit" class="btn btn-primary">Validate</button>
+                    }
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
                 </div>
             </div>

@@ -32,8 +32,15 @@ namespace CryptoManager.Data
         private List<UserAccount> ReadUserAccounts()
         {
             if(File.Exists(this.FilePath))
-                return JsonConvert.DeserializeObject<List<UserAccount>>(File.ReadAllText(this.FilePath));
-            
+                try
+                {
+                    return JsonConvert.DeserializeObject<List<UserAccount>>(File.ReadAllText(this.FilePath));
+                }
+                catch(Exception ex)
+                {
+                    // TODO : Notify the user and ask for action to take with corrupted file
+                }
+
             return new List<UserAccount>();
         }
 

@@ -46,7 +46,9 @@ async void CreateElectronWindow()
             Height = 1000,
             Resizable = false,
             Maximizable = false,
-            Title = "Crypto Manager"
+            AutoHideMenuBar = true,
+            
+            Title = "Crypto Manager",
         }); 
 
     window.OnClosed += () => Electron.App.Quit();

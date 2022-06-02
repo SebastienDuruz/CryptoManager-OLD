@@ -78,7 +78,7 @@ else
             </tbody>
         </table>
     </div>
-    @if(String.IsNullOrWhiteSpace(FilterText))
+    @if(String.IsNullOrWhiteSpace(FilterText) && !CoinGeckoFetcher.OfflineMode)
     {
     <div class="d-flex w-100 align-items-between justify-content-between">
         <div class="btn-toolbar flex-fill justify-content-between" role="toolbar">
@@ -102,7 +102,6 @@ else
         </div>
     </div>
     }
-   
 }
 
 @code{

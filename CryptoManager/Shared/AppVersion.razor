@@ -1,0 +1,50 @@
+﻿@using ElectronNET.API
+@using ElectronNET.API.Entities
+
+<div class="w-100 justify-content-center">
+    <div class="d-flex justify-content-end">
+        @if(UpdateAvailable)
+        {
+        <div class="d-flex border-end rounded justify-content-center" style="width: 300px;">
+            <span>Version @NewVersion available, click <a @onclick="RestartAndUpdateAsync">here</a> to apply it now !</span>
+        </div>
+        }
+        else
+        {
+        <div class="d-flex border-bottom border-left border-right-0 rounded justify-content-center" style="width: 130px;">
+            <span>Version @CurrentVersion</span>
+        </div>
+        }
+    </div>
+</div>
+
+
+@code {
+    private bool UpdateAvailable { get; set; }
+    private string CurrentVersion { get; set; }
+    private string NewVersion { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.UpdateAvailable = false;
+        this.CurrentVersion = await Electron.App.GetVersionAsync();
+        this.NewVersion = "0";
+
+        try
+        {
+            var update = await Electron.AutoUpdater.CheckForUpdatesAsync();
+            this.NewVersion = update.UpdateInfo.Version;
+            this.UpdateAvailable = true;
+        }
+        catch(Exception ex)
+        {
+            UpdateAvailable = false;
+        }
+    }
+
+    private async Task RestartAndUpdateAsync()
+    {
+        await Electron.AutoUpdater.DownloadUpdateAsync();
+        Electron.AutoUpdater.QuitAndInstall();
+    }
+}

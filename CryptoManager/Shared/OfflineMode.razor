@@ -1,0 +1,19 @@
+﻿@using CryptoManager.Data
+
+@inject CoinGeckoFetcher CoinGeckoFetcher
+
+@if(CoinGeckoFetcher.OfflineMode)
+{
+    <div class="m-2 p-2 w-100">
+        <div class="w-100 text-center">
+            <span class="h4 text-danger"><i class="oi oi-warning"></i>Running Offline ! CoinGecko API cannot be reached.</span>
+        </div>
+        <div class="w-100 text-center">
+            <span class="h4 text-danger">Check your connection status and restart the application !</span>
+        </div>
+    </div>
+}
+
+@code {
+
+}

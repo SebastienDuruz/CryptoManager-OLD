@@ -8,9 +8,18 @@
     <div>
         <NavBar></NavBar>
     </div>
-    <main>
-        <article>
-            @Body
-        </article>
-    </main>
+    <div class="d-flex flex-column w-100">
+        <div>
+            <AppVersion></AppVersion>
+        </div>
+        <div>
+            <OfflineMode></OfflineMode>
+        </div>
+        <main>
+            <article>
+                @Body
+            </article>
+        </main>
+    </div>
+    
 </div>

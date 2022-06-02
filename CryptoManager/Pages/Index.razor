@@ -74,7 +74,21 @@
         <tbody>
             @foreach(UserAccount account in UserAccountService.UserAccounts.OrderBy(x => x.Coin))
             {
-                CoinGeckoMarket? coin = CoinGeckoFetcher.Coins.Where(x => x.symbol.ToUpper() == account.Coin).FirstOrDefault();
+                CoinGeckoMarket? coin;
+
+                try
+                {
+                    coin = CoinGeckoFetcher.Coins.Where(x => x.symbol.ToUpper() == account.Coin).FirstOrDefault();
+                }
+                catch(Exception ex)
+                {
+                    coin = new CoinGeckoMarket() { current_price = 0, image = "NO DATA", name = "NO DATA", symbol = "NO DATA", id = "NO DATA"};
+                }
+
+                if(coin == null)
+                {
+                    coin = new CoinGeckoMarket() { current_price = 0, image = "NO DATA", name = "NO DATA", symbol = "NO DATA", id = "NO DATA"};
+                }
 
                 @if(ApplyTextFilter(account.Name, account.AccountCategory, account.Coin) && ApplyCategoryFilter(account.AccountCategory) && ApplyCoinFilter(account.Coin))
                 {
@@ -129,7 +143,14 @@
         TotalValue = 0;
         foreach(UserAccount account in UserAccountService.UserAccounts)
         {
-            TotalValue += CoinGeckoFetcher.Coins.Where(x => x.symbol.ToUpper() == account.Coin).FirstOrDefault().current_price * account.CoinAmount;
+            try
+            {
+                TotalValue += CoinGeckoFetcher.Coins.Where(x => x.symbol.ToUpper() == account.Coin).FirstOrDefault().current_price * account.CoinAmount;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         StateHasChanged();
