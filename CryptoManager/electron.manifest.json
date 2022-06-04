@@ -1,25 +1,43 @@
 {
   "executable": "CryptoManager",
   "splashscreen": {
-    "imageFile": ""
+    "imageFile": "/wwwroot/favicon.ico"
   },
   "name": "CryptoManager",
-  "author": "",
+  "author": "Sébastien Duruz",
   "singleInstance": true,
   "build": {
     "appId": "com.CryptoManager.app",
     "productName": "CryptoManager",
-    "copyright": "Copyright © 2022",
+    "copyright": "Copyright Sébastien Duruz © 2022",
     "buildVersion": "0.0.4",
     "compression": "maximum",
+    "win": {
+      "publish": [
+        {
+          "provider": "github",
+          "owner": "SebastienDuruz",
+          "repo": "CryptoManager"
+        }]
+      },
+    "linux":{
+      "target": ["deb", "rpm", "AppImage", "zip"],
+      "maintainer": "Sébastien Duruz",
+      "publish": [
+      {
+        "provider": "github",
+        "owner": "SebastienDuruz",
+        "repo": "CryptoManager"
+      }]
+    },
     "directories": {
-      "output": "../../../bin/Desktop"
+      "output": "../../../Publish"
     },
     "extraResources": [
       {
         "from": "./bin",
         "to": "bin",
-        "filter": [ "**/*" ]
+        "filter": [ "**/*"]
       }
     ],
     "files": [

@@ -5,8 +5,8 @@
     <div class="d-flex justify-content-end">
         @if(UpdateAvailable)
         {
-        <div class="d-flex border-end rounded justify-content-center" style="width: 300px;">
-            <span>Version @NewVersion available, click <a @onclick="RestartAndUpdateAsync">here</a> to apply it now !</span>
+        <div class="d-flex border-bottom border-left border-right-0 rounded justify-content-center" style="width: 300px;">
+            <span>Version @NewVersion available, <a class="link-primary" role="button" @onclick="RestartAndUpdateAsync">Apply</a> it now !</span>
         </div>
         }
         else
@@ -28,13 +28,16 @@
     {
         this.UpdateAvailable = false;
         this.CurrentVersion = await Electron.App.GetVersionAsync();
-        this.NewVersion = "0";
 
         try
         {
             var update = await Electron.AutoUpdater.CheckForUpdatesAsync();
             this.NewVersion = update.UpdateInfo.Version;
             this.UpdateAvailable = true;
+
+            // TODO : It is working ?
+            if (!Electron.AutoUpdater.AutoDownload)
+                await Electron.AutoUpdater.DownloadUpdateAsync();
         }
         catch(Exception ex)
         {
@@ -42,9 +45,8 @@
         }
     }
 
-    private async Task RestartAndUpdateAsync()
+    private void RestartAndUpdateAsync()
     {
-        await Electron.AutoUpdater.DownloadUpdateAsync();
         Electron.AutoUpdater.QuitAndInstall();
     }
 }
