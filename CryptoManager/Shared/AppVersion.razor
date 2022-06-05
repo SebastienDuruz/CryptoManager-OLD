@@ -27,22 +27,32 @@
     protected override async Task OnInitializedAsync()
     {
         this.UpdateAvailable = false;
-        this.CurrentVersion = await Electron.App.GetVersionAsync();
 
-        try
+        if(HybridSupport.IsElectronActive)
         {
-            var update = await Electron.AutoUpdater.CheckForUpdatesAsync();
-            this.NewVersion = update.UpdateInfo.Version;
-            this.UpdateAvailable = true;
+            this.CurrentVersion = await Electron.App.GetVersionAsync();
 
-            // TODO : It is working ?
-            if (!Electron.AutoUpdater.AutoDownload)
-                await Electron.AutoUpdater.DownloadUpdateAsync();
+            try
+            {
+                var update = await Electron.AutoUpdater.CheckForUpdatesAsync();
+                this.NewVersion = update.UpdateInfo.Version;
+                this.UpdateAvailable = true;
+
+                // TODO : It is working ?
+                if (!Electron.AutoUpdater.AutoDownload)
+                    await Electron.AutoUpdater.DownloadUpdateAsync();
+            }
+            catch(Exception ex)
+            {
+                UpdateAvailable = false;
+            }
         }
-        catch(Exception ex)
+        else
         {
-            UpdateAvailable = false;
+            this.CurrentVersion = "N/A";
+            this.NewVersion = "N/A";
         }
+
     }
 
     private void RestartAndUpdateAsync()
