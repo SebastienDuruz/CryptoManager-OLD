@@ -21,7 +21,6 @@
         }]
       },
     "linux":{
-      "target": ["deb", "rpm", "AppImage", "zip"],
       "maintainer": "Sébastien Duruz",
       "publish": [
       {
