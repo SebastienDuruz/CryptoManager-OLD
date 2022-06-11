@@ -124,6 +124,18 @@ namespace CryptoManager.Data
             return "";
         }
 
+        public List<Tuple<string, string>> GetSimplePrice(List<string> coinIds)
+        {
+            List<Tuple<string, string>> coinInfos = new List<Tuple<string, string>>();
+
+            foreach(string coinId in coinIds)
+            {
+                coinInfos.Add(new Tuple<string, string>(coinId, GetSimplePrice(coinId)));
+            }
+            
+            return coinInfos;
+        }
+
         public void RefreshCoinList(int totalCoins)
         {
             this.PageCounter = totalCoins / CoinGeckoPageSize;

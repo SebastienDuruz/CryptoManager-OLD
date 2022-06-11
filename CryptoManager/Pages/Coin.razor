@@ -1,6 +1,5 @@
 ﻿@page "/coin/{coinSymbol}"
 
-@using ChartJs.Blazor.PieChart
 @using CryptoManager.Data
 @using CryptoManager.Models
 @using ChartJs.Blazor.LineChart
@@ -15,10 +14,10 @@
     <div class="flex-column">
         <div class="d-flex pe-2 pt-2 justify-content-between">
             <div class="align-self-center">
-                <span class="fw-bold display-5">@CoinInfos.name (@CoinInfos.symbol.ToUpper())</span>
+                <h2 class="fw-bold display-5">@CoinInfos.name (@CoinInfos.symbol.ToUpper())</h2>
             </div>
             <div class="align-self-center">
-                <span class="display-5">@CurrentPrice $</span>
+                <h2 class="display-5">@CurrentPrice $</h2>
             </div>
             <div>               
                 <img rel="icon" src="@CoinInfos.image.large" width="80" height="80">
@@ -39,20 +38,19 @@
             </div>
         </div>
         <div class="p-2 mt-2">
-            <span class="fw-bold pe-auto display-6 mt-2">30 days Graphics</span>
             <div class="d-flex">
                 <div class="w-50">
-                    <span class="fw-bold pe-auto">Price ($)</span>
+                    <h4 class="fw-bold pe-auto">Price ($)</h4>
                     <Chart Config="PriceChart"></Chart>
                 </div>
                 <div class="w-50">
-                    <span class="fw-bold pe-auto">Volume ($)</span>
+                    <h4 class="fw-bold pe-auto">Volume ($)</h4>
                     <Chart Config="VolumeChart"></Chart>
                 </div>
             </div>
         </div>
         <div class="p-2 mt-2">
-            <span class="fw-bold pe-auto display-6 mt-2">Description</span>
+            <h3 class="fw-bold pe-auto display-6 mt-2">Description</h3>
             @if(CoinInfos.description.en != "")
             {
                 <p>@((MarkupString)CoinInfos.description.en)</p>

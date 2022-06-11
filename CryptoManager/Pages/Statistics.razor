@@ -1,14 +1,88 @@
 ﻿@page "/stats"
 
+@using ChartJs.Blazor.PieChart
+@using CryptoManager.Data
+@using CryptoManager.Models
+
+@inject CoinGeckoFetcher CoinGeckoFetcher
+@inject UserAccountService UserAccountService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Accounts Statistics</PageTitle>
 
 <h2 class="m-2">Accounts Statistics</h2>
 
 <div class="m-2 mt-4">
-    <p>Work in progress...</p>
+    <Chart Config="DistributionChart"></Chart>
 </div>
 
 @code {
+    private PieConfig DistributionChart { get; set; }
+    List<DistributionChartData> DistributionChartDatas { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        List<string> coinsIds = new List<string>();
+        this.DistributionChartDatas = new List<DistributionChartData>();
+
+        foreach(UserAccount account in UserAccountService.UserAccounts)
+        {
+            DistributionChartData data = this.DistributionChartDatas.Where(x => x.CoinSymbol == account.Coin).FirstOrDefault();
+
+            // Alredy exists, only add amount
+            if(data != null)
+            {
+                this.DistributionChartDatas.Where(x => x.CoinSymbol == account.Coin).First().TotalAmount += account.CoinAmount;
+            }
+            else
+            {
+                this.DistributionChartDatas.Add(new DistributionChartData()
+                {
+                    CoinSymbol = account.Coin,
+                    CoinId = CoinGeckoFetcher.Coins.Where(x => x.symbol == account.Coin.ToLower()).FirstOrDefault().id,
+                    TotalAmount = account.CoinAmount
+                });
+            }
+        }
+
+        // Get the total value of coins for all coins
+        foreach(DistributionChartData data in this.DistributionChartDatas)
+        {
+            data.TotalValue = double.Parse(CoinGeckoFetcher.GetSimplePrice(data.CoinId)) * data.TotalAmount;
+        }
+
+        // Fetch the prices from CoinGecko and build data for the repartition chart
+        SetupDistributionChart();
+    }
+
+    private void SetupDistributionChart()
+    {
+        // build the base chart
+        this.DistributionChart = new PieConfig()
+        {
+            Options = new PieOptions()
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Distribution of the accounts by Coin"
+                }
+            }
+        };
+
+        // Build datas and labels
+        PieDataset<double> pricesDataset = new PieDataset<double>()
+        {
+            BorderColor = ColorUtil.ColorHexString(54, 162, 235)
+        };
+        foreach(DistributionChartData data in this.DistributionChartDatas)
+        {
+            this.DistributionChart.Data.Labels.Add(data.CoinSymbol);
+            pricesDataset.Add(data.TotalValue);
+        }
+
+        // Add the datas to the chart
+        this.DistributionChart.Data.Datasets.Add(pricesDataset);
+    }
 }
