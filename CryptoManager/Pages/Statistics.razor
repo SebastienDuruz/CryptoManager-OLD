@@ -3,6 +3,7 @@
 @using ChartJs.Blazor.PieChart
 @using CryptoManager.Data
 @using CryptoManager.Models
+@using System.Drawing
 
 @inject CoinGeckoFetcher CoinGeckoFetcher
 @inject UserAccountService UserAccountService
@@ -12,25 +13,63 @@
 
 <h2 class="m-2">Accounts Statistics</h2>
 
-<div class="m-2 mt-4">
-    <Chart Config="DistributionChart"></Chart>
+@if(this.DistributionChart == null || this.CategoryChart == null)
+{
+<div class="m-2 mt-4 d-flex">
+    <div>
+        Loading data...
+    </div>
 </div>
+}
+else
+{
+<div class="m-2 mt-4 d-flex align-self-center">
+    <div class="w-50 align-self-center">
+        <Chart Config="DistributionChart"></Chart>
+    </div>
+    <div class="w-50">
+        <Chart Config="CategoryChart"></Chart>
+    </div>
+</div>
+}
+
 
 @code {
     private PieConfig DistributionChart { get; set; }
+    private PieConfig CategoryChart { get; set; }
+    private Random Rand { get; set; }
+    private List<Color> Colors { get; set; }
     List<DistributionChartData> DistributionChartDatas { get; set; }
+    List<CategoryChartData> CategoriesChartDatas { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         List<string> coinsIds = new List<string>();
+        this.Rand = new Random();
+        this.Colors = new List<Color>()
+        {
+            Color.Aqua,
+            Color.Red,
+            Color.Violet,
+            Color.Blue,
+            Color.Green,
+            Color.Yellow,
+            Color.Orange,
+            Color.Pink,
+        };
         this.DistributionChartDatas = new List<DistributionChartData>();
+        this.CategoriesChartDatas = new List<CategoryChartData>();
 
         foreach(UserAccount account in UserAccountService.UserAccounts)
         {
-            DistributionChartData data = this.DistributionChartDatas.Where(x => x.CoinSymbol == account.Coin).FirstOrDefault();
+            DistributionChartData distributionData = this.DistributionChartDatas.Where(x => x.CoinSymbol == account.Coin).FirstOrDefault();
+            CategoryChartData categoryData = this.CategoriesChartDatas.Where(x => x.CategoryName == account.AccountCategory).FirstOrDefault();
 
-            // Alredy exists, only add amount
-            if(data != null)
+            // Get the coin id for CoinGecko API Calls
+            string accountCoinId = CoinGeckoFetcher.Coins.Where(x => x.symbol == account.Coin.ToLower()).FirstOrDefault().id;
+
+            // Alredy exists, only add amount DISTRIBUTION
+            if(distributionData != null)
             {
                 this.DistributionChartDatas.Where(x => x.CoinSymbol == account.Coin).First().TotalAmount += account.CoinAmount;
             }
@@ -39,8 +78,22 @@
                 this.DistributionChartDatas.Add(new DistributionChartData()
                 {
                     CoinSymbol = account.Coin,
-                    CoinId = CoinGeckoFetcher.Coins.Where(x => x.symbol == account.Coin.ToLower()).FirstOrDefault().id,
+                    CoinId = accountCoinId,
                     TotalAmount = account.CoinAmount
+                });
+            }
+
+            // Alredy exists, only add amount CATEGORIES
+            if(categoryData != null)
+            {
+                this.CategoriesChartDatas.Where(x => x.CategoryName == account.AccountCategory).First().TotalValue += double.Parse(CoinGeckoFetcher.GetSimplePrice(accountCoinId));
+            }
+            else
+            {
+                this.CategoriesChartDatas.Add(new CategoryChartData()
+                {
+                    CategoryName = account.AccountCategory,
+                    TotalValue = double.Parse(CoinGeckoFetcher.GetSimplePrice(accountCoinId))
                 });
             }
         }
@@ -53,10 +106,14 @@
 
         // Fetch the prices from CoinGecko and build data for the repartition chart
         SetupDistributionChart();
+        SetupCategoryChart();
+
     }
 
     private void SetupDistributionChart()
     {
+        Color chartColor = Colors[this.Rand.Next(0, Colors.Count())];
+
         // build the base chart
         this.DistributionChart = new PieConfig()
         {
@@ -66,23 +123,57 @@
                 Title = new OptionsTitle
                 {
                     Display = true,
-                    Text = "Distribution of the accounts by Coin"
+                    Text = "Distribution of the accounts by Coin ($)"
                 }
             }
         };
 
+
         // Build datas and labels
         PieDataset<double> pricesDataset = new PieDataset<double>()
         {
-            BorderColor = ColorUtil.ColorHexString(54, 162, 235)
+            HoverBackgroundColor = ColorUtil.FromDrawingColor(chartColor),
+            BorderColor = ColorUtil.FromDrawingColor(chartColor),
+
         };
         foreach(DistributionChartData data in this.DistributionChartDatas)
         {
             this.DistributionChart.Data.Labels.Add(data.CoinSymbol);
-            pricesDataset.Add(data.TotalValue);
+            pricesDataset.Add(double.Parse(data.TotalValue.ToString("0.00")));
         }
 
         // Add the datas to the chart
         this.DistributionChart.Data.Datasets.Add(pricesDataset);
+    }
+
+    private void SetupCategoryChart()
+    {
+        Color chartColor = Colors[this.Rand.Next(0, Colors.Count())];
+        this.CategoryChart = new PieConfig()
+        {
+            Options = new PieOptions()
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Distribution of the accounts by Category ($)"
+                }
+            }
+        };
+
+        PieDataset<double> pricesDataset = new PieDataset<double>()
+        {
+            HoverBackgroundColor = ColorUtil.FromDrawingColor(chartColor),
+            BorderColor = ColorUtil.FromDrawingColor(chartColor)
+        };
+
+        foreach(CategoryChartData data in this.CategoriesChartDatas)
+        {
+            this.CategoryChart.Data.Labels.Add(data.CategoryName);
+            pricesDataset.Add(Double.Parse(data.TotalValue.ToString("0.00")));
+        }
+
+        this.CategoryChart.Data.Datasets.Add(pricesDataset);
     }
 }
