@@ -1,12 +1,14 @@
 ﻿@using ElectronNET.API
 @using ElectronNET.API.Entities
 
+@inject IJSRuntime JSRuntime
+
 <div class="w-100 justify-content-center">
     <div class="d-flex justify-content-end">
         @if(UpdateAvailable)
         {
         <div class="d-flex border-bottom border-left border-right-0 rounded justify-content-center" style="width: 300px;">
-            <span>Version @NewVersion available, <a class="link-primary" role="button" @onclick="RestartAndUpdateAsync">Apply</a> it now !</span>
+            <span>Version @NewVersion available, <a class="link-primary" role="button" get it @onclick="() => NavigateToWeb(GithubURL)"> here</a> !</span>
         </div>
         }
         else
@@ -23,10 +25,12 @@
     private bool UpdateAvailable { get; set; }
     private string CurrentVersion { get; set; }
     private string NewVersion { get; set; }
+    private string GithubURL { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         this.UpdateAvailable = false;
+        this.GithubURL = "https://github.com/SebastienDuruz/CryptoManager/releases/";
 
         if(HybridSupport.IsElectronActive)
         {
@@ -38,9 +42,9 @@
                 this.NewVersion = update.UpdateInfo.Version;
                 this.UpdateAvailable = true;
 
-                // TODO : It is working ?
-                if (!Electron.AutoUpdater.AutoDownload)
-                    await Electron.AutoUpdater.DownloadUpdateAsync();
+                // TODO : It is working ? NO IT'S NOT WORKING
+                //if (!Electron.AutoUpdater.AutoDownload)
+                //    await Electron.AutoUpdater.DownloadUpdateAsync();
             }
             catch(Exception ex)
             {
@@ -58,5 +62,10 @@
     private void RestartAndUpdateAsync()
     {
         Electron.AutoUpdater.QuitAndInstall();
+    }
+
+    public async Task NavigateToWeb(string url)
+    {
+        await JSRuntime.InvokeAsync<object>("open", url, "_blank");
     }
 }

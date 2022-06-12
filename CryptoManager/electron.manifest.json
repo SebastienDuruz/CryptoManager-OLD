@@ -10,7 +10,7 @@
     "appId": "com.CryptoManager.app",
     "productName": "CryptoManager",
     "copyright": "Copyright Sébastien Duruz © 2022",
-    "buildVersion": "0.0.4",
+    "buildVersion": "0.0.5",
     "compression": "maximum",
     "win": {
       "publish": [
