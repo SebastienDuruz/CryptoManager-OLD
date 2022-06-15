@@ -43,6 +43,25 @@
         </div>
     </div>
     <div class="m-2">
+        <span class="h5">Statistics settings</span>
+        <div class="d-flex w-100 align-items-center justify-content-center">
+            <div class="p-2 w-75">
+                Activate the Coin chart ?
+            </div>
+            <div class="p-2 w-25">
+                <input type="checkbox" class="" data-toggle="toggle" @bind="@NewSettings.CoinDistributionChart">
+            </div>
+        </div>
+        <div class="d-flex w-100 align-items-center justify-content-center">
+            <div class="p-2 w-75">
+                Activate the Category chart ?
+            </div>
+            <div class="p-2 w-25">
+                <input type="checkbox" data-toggle="toggle" @bind="@NewSettings.CategoryDistributionChart">
+            </div>
+        </div>
+    </div>
+    <div class="m-2">
         <span class="h5">General settings</span>
         <div class="d-flex w-100 align-items-center justify-content-center">
             <div class="p-2 w-75">

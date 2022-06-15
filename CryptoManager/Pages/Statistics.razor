@@ -7,29 +7,36 @@
 
 @inject CoinGeckoFetcher CoinGeckoFetcher
 @inject UserAccountService UserAccountService
+@inject UserSettingsService UserSettingsService
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Accounts Statistics</PageTitle>
 
 <h2 class="m-2">Accounts Statistics</h2>
 
-@if(this.DistributionChart == null || this.CategoryChart == null)
+@if(this.DistributionChart == null && this.CategoryChart == null)
 {
 <div class="m-2 mt-4 d-flex">
     <div>
-        Loading data...
+        Charts are not activated !
     </div>
 </div>
 }
 else
 {
 <div class="m-2 mt-4 d-flex align-self-center">
+    @if(UserSettingsService.UserSettings.CoinDistributionChart)
+    {
     <div class="w-50 align-self-center">
         <Chart Config="DistributionChart"></Chart>
-    </div>
+    </div>    
+    }
+    @if(UserSettingsService.UserSettings.CategoryDistributionChart)
+    {
     <div class="w-50">
         <Chart Config="CategoryChart"></Chart>
     </div>
+    }
 </div>
 }
 
@@ -105,9 +112,14 @@ else
         }
 
         // Fetch the prices from CoinGecko and build data for the repartition chart
-        SetupDistributionChart();
-        SetupCategoryChart();
-
+        if(UserSettingsService.UserSettings.CoinDistributionChart)
+        {
+            SetupDistributionChart();
+        }
+        if (UserSettingsService.UserSettings.CategoryDistributionChart)
+        {
+            SetupCategoryChart();
+        }
     }
 
     private void SetupDistributionChart()
