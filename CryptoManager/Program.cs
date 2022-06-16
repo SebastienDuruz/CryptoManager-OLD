@@ -1,4 +1,5 @@
 using CryptoManager.Data;
+using CryptoManager.ElectronApp;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
 
@@ -23,36 +24,16 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
+// Open Electron Window
 if (HybridSupport.IsElectronActive)
 {
-    CreateElectronWindow();
+    ElectronHandler.CreateElectronWindow();
 }
 
 app.Run();
-
-async void CreateElectronWindow()
-{
-    var window = await Electron.WindowManager.CreateWindowAsync(
-        new BrowserWindowOptions() {
-            Width = 1300,
-            Height = 1000,
-            Resizable = false,
-            Maximizable = false,
-            AutoHideMenuBar = true,
-            Title = "Crypto Manager",
-        }); 
-
-    window.Show();
-
-    window.OnClosed += () => Electron.App.Quit();
-}
-
 

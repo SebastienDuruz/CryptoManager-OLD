@@ -1,5 +1,6 @@
 ﻿@page "/settings"
 @using CryptoManager.Data
+@using CryptoManager.ElectronApp
 @using CryptoManager.Models
 @using CryptoManager.Pages.Components
 
@@ -110,7 +111,7 @@
         await JSRuntime.InvokeVoidAsync("alert", "Your settings has been saved !");
 
         // Refresh the page to apply potential theme change
-        NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
+        ElectronHandler.ReloadMainWindow();
     }
 
     private void GetThemesFromCSSFiles()
