@@ -31,18 +31,13 @@ namespace CryptoManager.Data
             return new UserSettings();
         }
 
-        public void WriteUserSettings()
-        {
-            File.WriteAllText(this.FilePath, JsonConvert.SerializeObject(this.UserSettings));
-        }
-
         public void WriteUserSettings(UserSettings newSettings)
         {
             File.WriteAllText(this.FilePath, JsonConvert.SerializeObject(newSettings));
             this.UserSettings = newSettings;
         }
 
-        public void ReloadSettings()
+        public async Task ReloadSettings()
         {
             if (File.Exists(this.FilePath))
                 this.UserSettings = ReadUserSettings();

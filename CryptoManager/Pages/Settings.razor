@@ -11,6 +11,12 @@
 
 <PageTitle>Settings</PageTitle>
 
+@if(!_componentLoaded)
+{
+    <Loading/>
+}
+else
+{
 <h2 class="m-2">App settings</h2>
 
 <EditForm Model="NewSettings">
@@ -82,36 +88,44 @@
         <button class="btn btn-outline-primary w-100 m-2" @onclick="() => SaveUserSettings()">Save</button>
     </div>
 </EditForm>
+}
 
 @code{
     private UserSettings NewSettings { get; set; }
     private List<string> Themes { get; set; }
     private List<int> CoinPerPages { get; set; }
     private List<int> CoinAmounts { get; set; }
+    private bool _componentLoaded = false;
 
     protected override async Task OnInitializedAsync()
     {
+        // TODO : Find a better way to force the user to set these settings
+        this.CoinPerPages = new List<int>() { 25, 50, 100 };
+        this.CoinAmounts = new List<int>() { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000 };
         this.NewSettings = UserSettingsService.ReadUserSettings();
         this.Themes = new List<string>();
         this.GetThemesFromCSSFiles();
 
-        // TODO : Find a better way to force the user to set these settings
-        this.CoinPerPages = new List<int>() { 25, 50, 100 };
-        this.CoinAmounts = new List<int>() { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000 };
+        this._componentLoaded = true;        
     }
 
     private async Task SaveUserSettings()
     {
+        this._componentLoaded = false;
+        StateHasChanged();
+
         UserSettingsService.WriteUserSettings(NewSettings);
 
         // Apply the changes without the need of restarting the app
-        UserSettingsService.ReloadSettings();
-        CoinGeckoFetcher.RefreshCoinList(UserSettingsService.UserSettings.CoinAmount);
-
-        await JSRuntime.InvokeVoidAsync("alert", "Your settings has been saved !");
+        await Task.Run(UserSettingsService.ReloadSettings);
+        await CoinGeckoFetcher.RefreshCoinList(UserSettingsService.UserSettings.CoinAmount);
 
         // Refresh the page to apply potential theme change
         ElectronHandler.ReloadMainWindow();
+
+        this._componentLoaded = true;
+
+        await JSRuntime.InvokeVoidAsync("alert", "Your settings has been saved !");
     }
 
     private void GetThemesFromCSSFiles()

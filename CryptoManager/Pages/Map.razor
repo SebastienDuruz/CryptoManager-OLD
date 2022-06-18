@@ -11,9 +11,9 @@
 
 <h2 class="m-2">Crypto Currencies by Market Cap</h2>
 
-@if(CoinGeckoFetcher.Coins == null)
+@if(!_componentLoaded)
 {
-    <p><em>Loading...</em></p>
+    <Loading/>
 }
 else
 {
@@ -37,7 +37,7 @@ else
                 {
                     @foreach (CoinGeckoMarket coin in CoinGeckoFetcher.Coins.Take(new Range((CurrentPage * PageSize) - PageSize, CurrentPage * PageSize)))   
                     {
-                        <tr class="table-active" role="button" @onclick="@(async () => await LoadCoinPage(coin.id))">
+                        <tr class="table-active" role="button" @onclick="@(async () => LoadCoinPage(coin.id))">
                             <th class="align-middle" scope="row">
                                 <img rel="icon" src="@coin.image" width="30" height="30">
                                 <span class="fw-bold p-1 pe-auto"> @coin.name</span>
@@ -58,7 +58,7 @@ else
                     {
                         if(coin.name.ToLower().Contains(FilterText.ToLower()) || coin.symbol.ToLower().Contains(FilterText.ToLower()) || coin.id.ToLower().Contains(FilterText.ToLower()))
                         {
-                            <tr class="table-active" role="button" @onclick="@(async () => await LoadCoinPage(coin.id))">
+                            <tr class="table-active" role="button" @onclick="@(async () => LoadCoinPage(coin.id))">
                                 <th class="align-middle" scope="row">
                                     <img rel="icon" src="@coin.image" width="30" height="30">
                                     <span class="fw-bold p-1 pe-auto"> @coin.name</span>
@@ -110,6 +110,7 @@ else
     private int PageSize { get; set; }
     private int CurrentPage { get; set; }
     private int TotalPages { get; set; }
+    private bool _componentLoaded = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -118,9 +119,10 @@ else
         this.PageSize = UserSettingsService.UserSettings.CoinPerPage;
         this.CurrentPage = 1;
         this.TotalPages = CoinGeckoFetcher.Coins.Count / this.PageSize;
+        this._componentLoaded = true;
     }
 
-    private async Task LoadCoinPage(string coinId)
+    private void LoadCoinPage(string coinId)
     {
         NavManager.NavigateTo($"/coin/{coinId}");
     }

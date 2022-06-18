@@ -1,5 +1,6 @@
 ﻿using ElectronNET.API;
 using ElectronNET.API.Entities;
+using Microsoft.AspNetCore.Components;
 
 namespace CryptoManager.ElectronApp
 {
@@ -28,8 +29,14 @@ namespace CryptoManager.ElectronApp
 
         public async static void ReloadMainWindow()
         {
-            AppMainWindow.Reload();
-            AppMainWindow.FocusOnWebView();
+            if(AppMainWindow != null)
+            {
+                AppMainWindow.Reload();
+
+                // Resolve an issue where the focus is lost and user need to focus other window to be able to use inputs
+                AppMainWindow.Minimize();
+                AppMainWindow.Restore();
+            }
         }
     }
 }

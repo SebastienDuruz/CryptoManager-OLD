@@ -8,65 +8,72 @@
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Coin Details Page</PageTitle>
-
-@if(CoinInfos != null)
+@if (!_componentLoaded)
 {
-    <div class="flex-column">
-        <div class="d-flex pe-2 pt-2 justify-content-between">
-            <div class="align-self-center">
-                <h2 class="fw-bold display-5">@CoinInfos.name (@CoinInfos.symbol.ToUpper())</h2>
-            </div>
-            <div class="align-self-center">
-                <h2 class="display-5">@CurrentPrice $</h2>
-            </div>
-            <div>               
-                <img rel="icon" src="@CoinInfos.image.large" width="80" height="80">
-            </div>
-            <div class="align-self-center">
-                @if(CoinInfos.links.homepage.Count > 0 && !String.IsNullOrWhiteSpace(CoinInfos.links.homepage[0]))
-                {
-                    <div>
-                        <span class="badge bg-primary" role="button" @onclick="() => NavigateToWeb(CoinInfos.links.homepage[0])">Website</span>
-                    </div>
-                }
-                @if(CoinInfos.links.repos_url.github.Count > 0 && !String.IsNullOrWhiteSpace(CoinInfos.links.repos_url.github[0]))
-                {
-                    <div>
-                        <span class="badge bg-primary accordion-body" role="button" @onclick="() => NavigateToWeb(CoinInfos.links.repos_url.github[0])">Github</span>
-                    </div>
-                }
-            </div>
-        </div>
-        <div class="p-2 mt-2">
-            <div class="d-flex">
-                <div class="w-50">
-                    <h4 class="fw-bold pe-auto">Price ($)</h4>
-                    <Chart Config="PriceChart"></Chart>
-                </div>
-                <div class="w-50">
-                    <h4 class="fw-bold pe-auto">Volume ($)</h4>
-                    <Chart Config="VolumeChart"></Chart>
-                </div>
-            </div>
-        </div>
-        <div class="p-2 mt-2">
-            <h3 class="fw-bold pe-auto display-6 mt-2">Description</h3>
-            @if(CoinInfos.description.en != "")
-            {
-                <p>@((MarkupString)CoinInfos.description.en)</p>
-            }
-            else
-            {
-                <p>No description provided.</p>
-            }
-        </div>
-    </div>
+    <Loading/>
 }
 else
 {
-    <p>The Coin [@CoinSymbol] has not been found, please try later</p>
-    <p>Return to the full Map by clicking <a href="/map">here</a></p>
+    @if(CoinInfos != null)
+    {
+        <div class="flex-column">
+            <div class="d-flex pe-2 pt-2 justify-content-between">
+                <div class="align-self-center">
+                    <h2 class="fw-bold display-5">@CoinInfos.name (@CoinInfos.symbol.ToUpper())</h2>
+                </div>
+                <div class="align-self-center">
+                    <h2 class="display-5">@CurrentPrice $</h2>
+                </div>
+                <div>               
+                    <img rel="icon" src="@CoinInfos.image.large" width="80" height="80">
+                </div>
+                <div class="align-self-center">
+                    @if(CoinInfos.links.homepage.Count > 0 && !String.IsNullOrWhiteSpace(CoinInfos.links.homepage[0]))
+                    {
+                        <div>
+                            <span class="badge bg-primary" role="button" @onclick="() => NavigateToWeb(CoinInfos.links.homepage[0])">Website</span>
+                        </div>
+                    }
+                    @if(CoinInfos.links.repos_url.github.Count > 0 && !String.IsNullOrWhiteSpace(CoinInfos.links.repos_url.github[0]))
+                    {
+                        <div>
+                            <span class="badge bg-primary accordion-body" role="button" @onclick="() => NavigateToWeb(CoinInfos.links.repos_url.github[0])">Github</span>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="p-2 mt-2">
+                <div class="d-flex">
+                    <div class="w-50">
+                        <h4 class="fw-bold pe-auto">Price ($)</h4>
+                        <Chart Config="PriceChart"></Chart>
+                    </div>
+                    <div class="w-50">
+                        <h4 class="fw-bold pe-auto">Volume ($)</h4>
+                        <Chart Config="VolumeChart"></Chart>
+                    </div>
+                </div>
+            </div>
+            <div class="p-2 mt-2">
+                <h3 class="fw-bold pe-auto display-6 mt-2">Description</h3>
+                @if(CoinInfos.description.en != "")
+                {
+                    <p>@((MarkupString)CoinInfos.description.en)</p>
+                }
+                else
+                {
+                    <p>No description provided.</p>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>The Coin [@CoinSymbol] has not been found, please try later</p>
+        <p>Return to the full Map by clicking <a href="/map">here</a></p>
+    }
 }
+
 
 @code {
     [Parameter]
@@ -75,12 +82,13 @@ else
     private LineConfig PriceChart { get; set; }
     private LineConfig VolumeChart { get; set; }
     private string CurrentPrice { get; set; }
+    private bool _componentLoaded = false;
 
     protected override async Task OnInitializedAsync()
     {
-        this.CoinInfos = CoinGeckoFetcher.GetCoinData(this.CoinSymbol);
-        this.CurrentPrice = CoinGeckoFetcher.GetSimplePrice(this.CoinSymbol);
-        SetupLinearChart();
+        await Task.Run(FetchDataAsync);
+        await Task.Run(SetupLinearChartAsync);
+        this._componentLoaded = true;
     }
 
     public async Task NavigateToWeb(string url)
@@ -88,7 +96,13 @@ else
         await JSRuntime.InvokeAsync<object>("open", url, "_blank");
     }
 
-    private void SetupLinearChart()
+    private async Task FetchDataAsync()
+    {
+        this.CoinInfos = await CoinGeckoFetcher.GetCoinData(this.CoinSymbol);
+        this.CurrentPrice = await CoinGeckoFetcher.GetSimplePrice(this.CoinSymbol);
+    }
+
+    private async Task SetupLinearChartAsync()
     {
         if(this.CoinInfos.market_datas != null)
         {

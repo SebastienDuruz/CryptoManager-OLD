@@ -19,17 +19,15 @@ namespace CryptoManager.Data
             this.BaseURL = "https://api.coingecko.com/api/v3/";
             this.PageCounter = userSettings.UserSettings.CoinAmount / CoinGeckoPageSize;
             this.OfflineMode = false;
-            this.Coins = GetCoins();
-
-            // Set offlineMode if CoinGecko is not reachable
-            if(this.Coins.Count == 0)
-                this.OfflineMode = true;
+            this.GetCoinsAsync();
         }
 
-        private List<CoinGeckoMarket> GetCoins()
+        public void GetCoinsAsync()
         {
-            List<CoinGeckoMarket> finalCoinsList = new List<CoinGeckoMarket>();
+            // Reset the list before doing anything
+            this.Coins = new List<CoinGeckoMarket>();
 
+            // Prepare the request
             this.Client = new HttpClient();
             this.Client.BaseAddress = new Uri(this.BaseURL);
             this.Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -49,20 +47,18 @@ namespace CryptoManager.Data
                         // Parse the response to ActivityModel
                         string jsonString = response.Content.ReadAsStringAsync().Result;
 
-                        List<CoinGeckoMarket> coins = JsonConvert.DeserializeObject<List<CoinGeckoMarket?>>(jsonString);
-                        finalCoinsList.AddRange(coins);
+                        Coins.AddRange(JsonConvert.DeserializeObject<List<CoinGeckoMarket?>>(jsonString));
                     }
                 }
                 catch(Exception ex)
                 {
-                    // TODO : Logging the errors, maybe set Offline Mode ?
+                    this.Coins = new List<CoinGeckoMarket>();
+                    this.OfflineMode = true;
                 }
             }
-
-            return finalCoinsList;
         }
 
-        public CoinGeckoFullData GetCoinData(string coinId)
+        public async Task<CoinGeckoFullData> GetCoinData(string coinId)
         {
             // Prepare the request
             this.Client = new HttpClient();
@@ -97,7 +93,7 @@ namespace CryptoManager.Data
             return null;
         }
 
-        public string GetSimplePrice(string coinId)
+        public async Task<string> GetSimplePrice(string coinId)
         {
             // Prepare the request
             this.Client = new HttpClient();
@@ -118,28 +114,16 @@ namespace CryptoManager.Data
             }
             catch (Exception ex)
             {
-                
+                // TODO : Logging the error
             }
 
             return "";
         }
 
-        public List<Tuple<string, string>> GetSimplePrice(List<string> coinIds)
-        {
-            List<Tuple<string, string>> coinInfos = new List<Tuple<string, string>>();
-
-            foreach(string coinId in coinIds)
-            {
-                coinInfos.Add(new Tuple<string, string>(coinId, GetSimplePrice(coinId)));
-            }
-            
-            return coinInfos;
-        }
-
-        public void RefreshCoinList(int totalCoins)
+        public async Task RefreshCoinList(int totalCoins)
         {
             this.PageCounter = totalCoins / CoinGeckoPageSize;
-            this.Coins = GetCoins();
+            GetCoinsAsync();
         }
     }
 }
