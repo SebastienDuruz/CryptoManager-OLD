@@ -1,0 +1,64 @@
+﻿@using CryptoManager.Data
+@using CryptoManager.Models
+@inject CoinGeckoFetcher CoinGeckoFetcher
+@inject UserAccountService UserAccountService
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete a crypto account !</h5>
+            </div>
+            <div class="modal-body">
+                    <p>Do you really want to delete the account @Account.Name</p>   
+            </div>
+            <div class="modal-footer">
+                @if(!CoinGeckoFetcher.OfflineMode)
+                {
+                    <button type="submit" class="btn btn-primary" @onclick="() => ExecuteDeleteAccount()">Ok</button>
+                }
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [CascadingParameter]
+    private Pages.Index Parent { get; set; }
+    private string? Title { get; set; }
+    private UserAccount Account = new UserAccount();
+    private Guid Guid = Guid.NewGuid();
+    private string ModalDisplay = "none;";
+    private string ModalClass = "";
+    private bool ShowBackdrop = false;
+
+    public void Open(UserAccount account)
+    {
+        Account = account;
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    private void ExecuteDeleteAccount()
+    {
+        UserAccountService.DeleteUserAccount(Account.Uuid);
+        this.Parent.RefreshComponent();
+        this.Close();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+}

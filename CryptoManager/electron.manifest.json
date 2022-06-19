@@ -13,6 +13,7 @@
     "buildVersion": "0.0.7",
     "compression": "maximum",
     "win": {
+      "icon": "/wwwroot/favicon.ico",
       "publish": [
         {
           "provider": "github",
@@ -22,6 +23,9 @@
       },
     "linux":{
       "maintainer": "Sébastien Duruz",
+      "icon": "/wwwroot/favicon.ico",
+      "executableName": "CryptoManager",
+      "target": [ "appImage" ],
       "publish": [
       {
         "provider": "github",

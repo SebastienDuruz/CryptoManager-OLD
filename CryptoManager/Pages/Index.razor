@@ -111,7 +111,7 @@ else
                                 <button class="btn" @onclick="() => AccountModalComponent.OpenModify(account)">
                                     <i class="oi oi-pencil"></i>
                                 </button>
-                                <button class="btn" @onclick="() => this.DeleteAccount(account)">
+                                <button class="btn" @onclick="() => DeleteAccountModalComponent.Open(account)">
                                     <i class="oi oi-trash"></i>
                                 </button>
                             </td>
@@ -125,12 +125,16 @@ else
     <CascadingValue Value="this">
         <AddAccountModal @ref="AccountModalComponent"></AddAccountModal>
     </CascadingValue>
+    <CascadingValue Value="this">
+        <DeleteAccountModal @ref="DeleteAccountModalComponent"></DeleteAccountModal>
+    </CascadingValue>
 }
 
 
 
 @code{
     private AddAccountModal? AccountModalComponent { get; set; }
+    private DeleteAccountModal? DeleteAccountModalComponent { get; set; }
     private double TotalValue { get; set; }
     private string? ActionTitle { get; set; }
     private string TextFilter { get; set; }
