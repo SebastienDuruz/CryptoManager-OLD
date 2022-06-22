@@ -12,3 +12,17 @@ The application is encapsuled in a desktop Electron app.
 
 ## Licence
 [GNU General Public License v3.0](LICENSE)
+
+## Using the application
+Get the latest release [here](https://github.com/SebastienDuruz/CryptoManager/releases)
+
+### Installation (Windows only)
+Download the **CryptoManager_X.X.X.exe** file and double click to install the application.
+
+### Without installation (Windows and Linux)
+You can download the conresponding **.zip** folder for *Linux* or *Windows*.
+
+To start the application, just execute the **.exe** file contains in the folder.
+
+
+
