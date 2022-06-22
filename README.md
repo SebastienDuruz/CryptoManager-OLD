@@ -22,7 +22,7 @@ Download the **CryptoManager_X.X.X.exe** file and double click to install the ap
 ### Without installation (Windows and Linux)
 Download the corresponding **.zip** folder for *Linux* or *Windows*.
 
-To start the application, just execute the **.exe** file contains in the folder.
+To start the application, execute the **.exe** file contains in the folder.
 
 
 
