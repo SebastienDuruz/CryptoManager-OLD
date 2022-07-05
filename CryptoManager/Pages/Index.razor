@@ -22,7 +22,7 @@ else
         <div class="flex-column w-50">
             <div class="card m-2">
                 <a href="stats" class="card-body btn btn-secondary">
-                    <span class="oi oi-dollar" aria-hidden="true"></span> Total Value : @TotalValue.ToString("0.00") $
+                    <span class="oi oi-dollar" aria-hidden="true"></span> Total Value : @TotalValue.ToString("0.00 $")
                 </a>
             </div>
         </div>  
@@ -78,6 +78,7 @@ else
                 </tr>
             </thead>       
             <tbody>
+                @{ double displayedValue = 0; }
                 @foreach(UserAccount account in UserAccountService.UserAccounts.OrderBy(x => x.Coin))
                 {
                     CoinGeckoMarket? coin;
@@ -98,6 +99,7 @@ else
 
                     @if(ApplyTextFilter(account.Name, account.AccountCategory, account.Coin) && ApplyCategoryFilter(account.AccountCategory) && ApplyCoinFilter(account.Coin))
                     {
+                        displayedValue += double.Parse(((coin.current_price * account.CoinAmount).ToString("0.00")));
                         <tr class="table-active">
                             <th class="align-middle" scope="row">@account.Name</th>
                             <td class="align-middle" @onclick="() => LoadCoinPage(coin.id)" role="button">
@@ -106,7 +108,7 @@ else
                             </td>
                             <td class="align-middle">@account.AccountCategory</td>
                             <td class="align-middle">@account.CoinAmount</td>
-                            <td class="align-middle">@((coin.current_price * account.CoinAmount).ToString("0.00")) $</td>
+                            <td class="align-middle">@((coin.current_price * account.CoinAmount).ToString("0.00 $"))</td>
                             <td class="align-middle">
                                 <button class="btn" @onclick="() => AccountModalComponent.OpenModify(account)">
                                     <i class="oi oi-pencil"></i>
@@ -119,6 +121,16 @@ else
                     }
                 }
             </tbody>
+            <tfoot>
+                <tr class="table-footer">
+                    <th class="align-middle" scope="row">Total Value</th>
+                    <td class="align-middle" role="button"></td>
+                    <td class="align-middle"></td>
+                    <td class="align-middle"></td>
+                    <td class="align-middle">@displayedValue.ToString("0.00 $")</td>
+                    <td class="align-middle"></td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 
@@ -136,6 +148,7 @@ else
     private AddAccountModal? AccountModalComponent { get; set; }
     private DeleteAccountModal? DeleteAccountModalComponent { get; set; }
     private double TotalValue { get; set; }
+    private double DisplayedValue { get; set; }
     private string? ActionTitle { get; set; }
     private string TextFilter { get; set; }
     private string CategoryFilter { get; set; }

@@ -39,6 +39,8 @@ namespace CryptoManager.Data
                 catch(Exception ex)
                 {
                     // TODO : Notify the user and ask for action to take with corrupted file
+                    this.UserAccounts = new List<UserAccount>();
+                    WriteUserAccounts();
                 }
 
             return new List<UserAccount>();
