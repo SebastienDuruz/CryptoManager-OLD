@@ -78,6 +78,7 @@ else
                 </tr>
             </thead>       
             <tbody>
+                @{ double displayedValue = 0; }
                 @foreach(UserAccount account in UserAccountService.UserAccounts.OrderBy(x => x.Coin))
                 {
                     CoinGeckoMarket? coin;
@@ -98,6 +99,7 @@ else
 
                     @if(ApplyTextFilter(account.Name, account.AccountCategory, account.Coin) && ApplyCategoryFilter(account.AccountCategory) && ApplyCoinFilter(account.Coin))
                     {
+                        displayedValue += @Double.Parse(((coin.current_price * account.CoinAmount).ToString("0.00")));
                         <tr class="table-active">
                             <th class="align-middle" scope="row">@account.Name</th>
                             <td class="align-middle" @onclick="() => LoadCoinPage(coin.id)" role="button">
@@ -119,6 +121,16 @@ else
                     }
                 }
             </tbody>
+            <tfoot>
+                <tr class="table-footer">
+                    <th class="align-middle">Total Value</th>
+                    <td class="align-middle"></td>
+                    <td class="align-middle"></td>
+                    <td class="align-middle"></td>
+                    <td class="align-middle">@displayedValue.ToString("0.00 $")</td>
+                    <td class="align-middle"></td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 
