@@ -7,4 +7,4 @@ dotnet build
 cd ../
 
 echo "Invoke electronize build Windows"
-electronize build /target win /dotnet-configuration release /PublishReadyToRun true
+electronize build /target win /dotnet-configuration release /PublishReadyToRun true /PublishSingleFile=true

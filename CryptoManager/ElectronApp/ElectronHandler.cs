@@ -7,7 +7,7 @@ namespace CryptoManager.ElectronApp
     {
         private static BrowserWindow AppMainWindow { get; set; }
 
-        public async static void CreateElectronWindow()
+        public async static Task CreateElectronWindow()
         {
             AppMainWindow = await Electron.WindowManager.CreateWindowAsync(
                 new BrowserWindowOptions()
