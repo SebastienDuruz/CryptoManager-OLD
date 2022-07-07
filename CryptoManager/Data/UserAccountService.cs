@@ -40,7 +40,7 @@ namespace CryptoManager.Data
                 {
                     // TODO : Notify the user and ask for action to take with corrupted file
                     this.UserAccounts = new List<UserAccount>();
-                    WriteUserAccounts();
+                    //this.WriteUserAccounts();
                 }
 
             return new List<UserAccount>();
