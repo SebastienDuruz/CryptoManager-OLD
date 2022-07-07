@@ -25,7 +25,6 @@ namespace CryptoManager.Data
                 catch(Exception ex)
                 {
                     // TODO : ask the user for action to take with corrupted file
-                    //this.WriteUserSettings(new UserSettings());
                 }
             }
 
