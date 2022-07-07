@@ -1,11 +1,8 @@
 using CryptoManager.Data;
 using CryptoManager.ElectronApp;
 using ElectronNET.API;
-using ElectronNET.API.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.WebHost.UseElectron(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -13,6 +10,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<CoinGeckoFetcher>();
 builder.Services.AddSingleton<UserAccountService>();
 builder.Services.AddSingleton<UserSettingsService>();
+
+builder.WebHost.UseElectron(args);
 
 var app = builder.Build();
 
@@ -31,9 +30,11 @@ app.MapFallbackToPage("/_Host");
 
 // Open Electron Window
 if (HybridSupport.IsElectronActive)
-{
-    ElectronHandler.CreateElectronWindow();
-}
+    CreateElectronWindow();
 
 app.Run();
 
+async void CreateElectronWindow()
+{
+    ElectronHandler.CreateElectronWindow();
+}

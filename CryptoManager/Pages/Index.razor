@@ -17,10 +17,9 @@
 else
 {
     <h2 class="m-2">Accounts Management</h2>
-
     <div class="d-flex">
         <div class="flex-column w-50">
-            <div class="card m-2">
+            <div class="card m-2 flex-fill">
                 <a href="stats" class="card-body btn btn-secondary">
                     <span class="oi oi-dollar" aria-hidden="true"></span> Total Value : @TotalValue.ToString("0.00 $")
                 </a>
@@ -64,9 +63,10 @@ else
             </div>
         </div>
     </EditForm>
-
     <div class="d-flex w-100">
         <table class="table table-sm table-hover m-2">
+            @if (UserAccountService.UserAccounts.Count() > 0)
+            {
             <thead>
                 <tr>
                     <th scope="col">Name</th>
@@ -76,7 +76,8 @@ else
                     <th scope="col">Value</th>
                     <th scope="col">Actions</th>
                 </tr>
-            </thead>       
+            </thead>     
+            }
             <tbody>
                 @{ double displayedValue = 0; }
                 @foreach(UserAccount account in UserAccountService.UserAccounts.OrderBy(x => x.Coin))
@@ -121,6 +122,8 @@ else
                     }
                 }
             </tbody>
+            @if(UserAccountService.UserAccounts.Count() > 0)
+            {
             <tfoot>
                 <tr class="table-footer">
                     <th class="align-middle" scope="row">Total Value</th>
@@ -131,9 +134,9 @@ else
                     <td class="align-middle"></td>
                 </tr>
             </tfoot>
+            }
         </table>
     </div>
-
     <CascadingValue Value="this">
         <AddAccountModal @ref="AccountModalComponent"></AddAccountModal>
     </CascadingValue>
@@ -141,8 +144,6 @@ else
         <DeleteAccountModal @ref="DeleteAccountModalComponent"></DeleteAccountModal>
     </CascadingValue>
 }
-
-
 
 @code{
     private AddAccountModal? AccountModalComponent { get; set; }

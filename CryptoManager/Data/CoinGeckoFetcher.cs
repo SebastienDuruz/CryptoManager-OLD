@@ -66,7 +66,7 @@ namespace CryptoManager.Data
             this.Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             // Execute the request
-            HttpResponseMessage response = this.Client.GetAsync($"coins/{coinId}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false").Result;
+            HttpResponseMessage response = await this.Client.GetAsync($"coins/{coinId}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false");
 
             if (response.IsSuccessStatusCode) 
             {
@@ -103,7 +103,7 @@ namespace CryptoManager.Data
             try
             {
                 // Execute the request
-                HttpResponseMessage response = this.Client.GetAsync($"simple/price?ids={coinId}&vs_currencies=usd&include_market_cap=false&include_24hr_vol=false&include_24hr_change=false&include_last_updated_at=false").Result;
+                HttpResponseMessage response = await this.Client.GetAsync($"simple/price?ids={coinId}&vs_currencies=usd&include_market_cap=false&include_24hr_vol=false&include_24hr_change=false&include_last_updated_at=false");
 
                 // All fine, deserialize the result
                 if (response.IsSuccessStatusCode)

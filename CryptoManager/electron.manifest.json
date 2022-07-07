@@ -10,10 +10,9 @@
     "appId": "com.CryptoManager.app",
     "productName": "CryptoManager",
     "copyright": "Copyright Sébastien Duruz © 2022",
-    "buildVersion": "0.0.7",
+    "buildVersion": "0.0.8",
     "compression": "maximum",
     "win": {
-      "icon": "/wwwroot/favicon.ico",
       "publish": [
         {
           "provider": "github",
@@ -21,17 +20,15 @@
           "repo": "CryptoManager"
         }]
       },
-    "linux":{
+    "linux": {
       "maintainer": "Sébastien Duruz",
-      "icon": "/wwwroot/favicon.ico",
-      "executableName": "CryptoManager",
-      "target": [ "appImage" ],
       "publish": [
-      {
-        "provider": "github",
-        "owner": "SebastienDuruz",
-        "repo": "CryptoManager"
-      }]
+        {
+          "provider": "github",
+          "owner": "SebastienDuruz",
+          "repo": "CryptoManager"
+        }
+      ]
     },
     "directories": {
       "output": "../../../Publish"
@@ -40,14 +37,14 @@
       {
         "from": "./bin",
         "to": "bin",
-        "filter": [ "**/*"]
+        "filter": ["**/*"]
       }
     ],
     "files": [
       {
         "from": "./ElectronHostHook/node_modules",
         "to": "ElectronHostHook/node_modules",
-        "filter": [ "**/*" ]
+        "filter": ["**/*"]
       },
       "**/*"
     ]
