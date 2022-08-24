@@ -6,7 +6,7 @@
         public string? symbol { get; set; }
         public string? name { get; set; }
         public string? image { get; set; }
-        public double current_price { get; set; }
+        public double current_price { get; set; } = 0;
         public double market_cap { get; set; }
         public double market_cap_rank { get; set; }
         public double total_volume { get; set; }
