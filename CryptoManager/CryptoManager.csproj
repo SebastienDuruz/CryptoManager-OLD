@@ -5,14 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>True</Optimize>
+    <Optimize>False</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
-    <PackageReference Include="ElectronNET.API" Version="13.5.1" />
+    <PackageReference Include="h5.ElectronNET.API" Version="20.0.3.31598" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
