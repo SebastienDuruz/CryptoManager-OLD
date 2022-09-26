@@ -109,7 +109,7 @@ namespace CryptoManager.Data
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonString = response.Content.ReadAsStringAsync().Result;
-                    return jsonString.Split(":")[2].Replace("}", "");
+                    return jsonString.Split(":")[2].Replace("}", "").Replace(".", ",");
                 }
             }
             catch (Exception ex)
