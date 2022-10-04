@@ -30,8 +30,6 @@ app.MapFallbackToPage("/_Host");
 
 // Open Electron Window
 if (HybridSupport.IsElectronActive)
-{
     ElectronHandler.CreateElectronWindow();
-}
 
 app.Run();
